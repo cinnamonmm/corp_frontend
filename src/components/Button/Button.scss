@@ -1,0 +1,78 @@
+@import '@/styles/variables';
+@import '@/styles/mixins';
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // バリアントスタイル
+  &--primary {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &--secondary {
+    background-color: $secondary-color;
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+
+  &--accent {
+    background-color: $accent-color;
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($accent-color, 10%);
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+
+  // サイズバリエーション
+  &--sm {
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-sm;
+  }
+
+  &--md {
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-md;
+  }
+
+  &--lg {
+    padding: $spacing-3 $spacing-6;
+    font-size: $font-lg;
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+}

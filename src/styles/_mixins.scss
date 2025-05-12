@@ -1,0 +1,69 @@
+// フレックスボックスのミックスイン
+@mixin fl($direction: row, $justify: flex-start, $align: stretch, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+// グリッドのミックスイン
+@mixin gr($columns: 1fr, $rows: auto, $gap: 0) {
+  display: grid;
+  grid-template-columns: $columns;
+  grid-template-rows: $rows;
+  gap: $gap;
+}
+
+// メディアクエリのミックスイン
+@mixin mq($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  } @else if $breakpoint == 2xl {
+    @media (min-width: $breakpoint-2xl) { @content; }
+  }
+}
+
+// ボタンのスタイルミックスイン
+@mixin btn($bg-color: $primary-color, $text-color: white, $padding: $spacing-2 $spacing-4) {
+  display: inline-block;
+  background-color: $bg-color;
+  color: $text-color;
+  padding: $padding;
+  border-radius: $border-radius;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($bg-color, 0.3);
+  }
+}
+
+// テキスト省略表示のミックスイン
+@mixin txt_truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行テキスト省略表示のミックスイン
+@mixin text_clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

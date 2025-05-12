@@ -1,0 +1,44 @@
+@import '@/styles/variables';
+@import '@/styles/mixins';
+
+.sass-demo {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-8;
+
+  &__title {
+    font-size: $font-3xl;
+    margin-bottom: $spacing-8;
+    text-align: center;
+
+    @include responsive(md) {
+      font-size: $font-4xl;
+    }
+  }
+
+  &__section {
+    margin-bottom: $spacing-8;
+
+    h2 {
+      font-size: $font-xl;
+      margin-bottom: $spacing-4;
+      border-bottom: 1px solid lighten($text-color, 70%);
+      padding-bottom: $spacing-2;
+    }
+  }
+
+  &__buttons {
+    @include flex(row, flex-start, center, wrap);
+    gap: $spacing-4;
+    margin-top: $spacing-4;
+  }
+
+  // レスポンシブデザイン
+  @include responsive(sm) {
+    padding: $spacing-6;
+  }
+
+  @include responsive(lg) {
+    padding: $spacing-12;
+  }
+}
