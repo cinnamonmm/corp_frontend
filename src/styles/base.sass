@@ -363,3 +363,74 @@ $properties: (
   transition: transform 0.1s ease
   &:active
     transform: scale(0.98)
+
+// backdrop-filter 用の変数定義
+$backdrop-blur-values: (0: 0, 1: 2px, 2: 4px, 3: 8px, 4: 12px, 5: 16px, 6: 24px, 7: 32px, 8: 48px, 9: 64px)
+$backdrop-brightness-values: (0: 0, 1: 0.25, 2: 0.5, 3: 0.75, 4: 0.9, 5: 1, 6: 1.1, 7: 1.25, 8: 1.5, 9: 1.75, 10: 2)
+$backdrop-contrast-values: (0: 0, 1: 0.25, 2: 0.5, 3: 0.75, 4: 0.9, 5: 1, 6: 1.1, 7: 1.25, 8: 1.5, 9: 1.75, 10: 2)
+$backdrop-grayscale-values: (0: 0%, 1: 25%, 2: 50%, 3: 75%, 4: 100%)
+$backdrop-saturate-values: (0: 0, 1: 0.25, 2: 0.5, 3: 0.75, 4: 0.9, 5: 1, 6: 1.25, 7: 1.5, 8: 1.75, 9: 2, 10: 3)
+$backdrop-sepia-values: (0: 0%, 1: 25%, 2: 50%, 3: 75%, 4: 100%)
+$backdrop-hue-rotate-values: (0: 0deg, 1: 45deg, 2: 90deg, 3: 135deg, 4: 180deg, 5: 225deg, 6: 270deg, 7: 315deg)
+$backdrop-invert-values: (0: 0%, 1: 25%, 2: 50%, 3: 75%, 4: 100%)
+
+// ブラウザ互換性のためのミックスイン
+@mixin backdrop-filter($value)
+  -webkit-backdrop-filter: $value
+  backdrop-filter: $value
+
+// 単一のフィルタータイプに対するクラス生成
+@mixin generate-backdrop-filter-classes($filter-type, $filter-values, $unit: "")
+  @each $level, $value in $filter-values
+    .bd#{$filter-type}#{$level}
+      @include backdrop-filter(#{$filter-type}(#{$value}#{$unit}))
+
+// 単一フィルタークラスの生成
+@include generate-backdrop-filter-classes("blur", $backdrop-blur-values)
+@include generate-backdrop-filter-classes("brightness", $backdrop-brightness-values)
+@include generate-backdrop-filter-classes("contrast", $backdrop-contrast-values)
+@include generate-backdrop-filter-classes("grayscale", $backdrop-grayscale-values, "%")
+@include generate-backdrop-filter-classes("saturate", $backdrop-saturate-values)
+@include generate-backdrop-filter-classes("sepia", $backdrop-sepia-values, "%")
+@include generate-backdrop-filter-classes("hue-rotate", $backdrop-hue-rotate-values)
+@include generate-backdrop-filter-classes("invert", $backdrop-invert-values, "%")
+
+// プリセット効果
+.bd-glass
+  @include backdrop-filter(blur(8px) saturate(1.5) brightness(1.05))
+  background-color: rgba(255, 255, 255, 0.5)
+.bd-frosted
+  @include backdrop-filter(blur(12px) saturate(1.2) brightness(1.1))
+  background-color: rgba(255, 255, 255, 0.25)
+.bd-dim
+  @include backdrop-filter(blur(4px) brightness(0.9))
+  background-color: rgba(0, 0, 0, 0.4)
+.bd-dark-glass
+  @include backdrop-filter(blur(16px) brightness(0.8) contrast(1.2))
+  background-color: rgba(0, 0, 0, 0.65)
+
+// 複合フィルターのサポート
+.backdrop-filter-none
+  @include backdrop-filter(none)
+
+// カスタムフィルターのためのデータ属性
+[data-backdrop-filter]
+  @each $filter-type, $filter-values in ("blur": $backdrop-blur-values, "brightness": $backdrop-brightness-values, "contrast": $backdrop-contrast-values, "grayscale": $backdrop-grayscale-values, "saturate": $backdrop-saturate-values, "sepia": $backdrop-sepia-values, "hue-rotate": $backdrop-hue-rotate-values, "invert": $backdrop-invert-values)
+    &[data-#{$filter-type}]
+      $value: attr(data-#{$filter-type})
+      @include backdrop-filter(#{$filter-type}(#{$value}))
+
+// ブラウザサポートのためのフォールバック
+.backdrop-fallback
+  position: relative
+
+  &::before
+    content: ""
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    z-index: -1
+    background: inherit
+    filter: inherit
