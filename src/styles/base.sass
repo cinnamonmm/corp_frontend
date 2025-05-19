@@ -1,0 +1,217 @@
+// 汎用的なSASSユーティリティクラス
+$base-unit: 0.25rem
+$spacer: $base-unit
+$breakpoints: (xs: 575.98px, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px)
+// フレックスボックス関連
+.fl
+  display: flex
+.fli
+  display: inline-flex
+.flw
+  flex-wrap: wrap
+.flnw
+  flex-wrap: nowrap
+.flwr
+  flex-wrap: wrap-reverse
+// フレックス方向
+$directions: (r: row, c: column, rr: row-reverse, cr: column-reverse)
+@each $suffix, $value in $directions
+  .fd#{$suffix}
+    flex-direction: $value
+// 水平方向の配置（justify-content）
+$justify-contents: (s: flex-start, e: flex-end, c: center, b: space-between, a: space-around, v: space-evenly)
+@each $suffix, $value in $justify-contents
+  .jc#{$suffix}
+    justify-content: $value
+// 垂直方向の配置（align-items）
+$align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
+@each $suffix, $value in $align-items
+  .ai#{$suffix}
+    align-items: $value
+  .as#{$suffix}
+    align-self: $value
+  .ac#{$suffix}
+    align-content: $value
+// フレックスアイテムの成長と収縮
+@for $i from 0 through 1
+  .fg#{$i}
+    flex-grow: $i
+  .fs#{$i}
+    flex-shrink: $i
+.fb0
+  flex-basis: 0
+.fba
+  flex-basis: auto
+// フレックスショートハンド
+.f1
+  flex: 1
+.f0
+  flex: 0
+.fa
+  flex: auto
+// グリッド関連
+.gr
+  display: grid
+.gri
+  display: inline-grid
+// グリッドギャップ - 基本単位を使用
+@for $i from 0 through 5
+  $value: if($i == 0, 0, $spacer * pow(2, $i - 1))
+  .gg#{$i}
+    gap: $value
+// グリッド列・行
+@for $i from 1 through 5
+  .gtc#{$i}
+    grid-template-columns: repeat($i, 1fr)
+  .gtr#{$i}
+    grid-template-rows: repeat($i, 1fr)
+// 自動フロー
+.gaf
+  grid-auto-flow: row
+.gafc
+  grid-auto-flow: column
+.gafd
+  grid-auto-flow: dense
+// 配置
+.gplcc
+  place-content: center
+.gplic
+  place-items: center
+// 表示関連
+.db
+  display: block
+.di
+  display: inline
+.dib
+  display: inline-block
+.dn
+  display: none
+// 位置関連
+$positions: (r: relative, a: absolute, f: fixed, s: sticky)
+@each $suffix, $value in $positions
+  .po#{$suffix}
+    position: $value
+.po-c
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+// スペーシング関数 - 簡略化
+@function spacing($level)
+  @if $level == 0
+    @return 0
+  @else if $level == 1
+    @return $spacer
+  @else
+    @return $spacer * (2 * ($level - 1))
+// 方向マップを定義
+$directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -right), y: (-top, -bottom))
+// マージンとパディングを生成
+@each $prop, $abbr in (margin: m, padding: p)
+  @each $dir_key, $dir_val in $directions
+    @for $i from 0 through 13
+      $value: spacing($i)
+      .#{$abbr}#{$dir_key}#{$i}
+        @if $dir_val == ''
+          #{$prop}: $value
+        @else if type-of($dir_val) == 'list'
+          @each $d in $dir_val
+            #{$prop}#{$d}: $value
+        @else
+          #{$prop}#{$dir_val}: $value
+// 自動マージン
+.ma
+  margin: auto
+.mxa
+  margin-left: auto
+  margin-right: auto
+.mya
+  margin-top: auto
+  margin-bottom: auto
+// テキスト関連
+$text-aligns: (c: center, l: left, r: right, j: justify)
+@each $suffix, $value in $text-aligns
+  .ta#{$suffix}
+    text-align: $value
+$text-decorations: (n: none, u: underline, lt: line-through)
+@each $suffix, $value in $text-decorations
+  .td#{$suffix}
+    text-decoration: $value
+$text-transforms: (u: uppercase, l: lowercase, c: capitalize)
+@each $suffix, $value in $text-transforms
+  .tt#{$suffix}
+    text-transform: $value
+// フォントウェイト
+@for $i from 1 through 9
+  .fw#{$i}
+    font-weight: $i * 100
+// フォントサイズ - 比率を使用
+$font-size-base: 1rem
+$font-sizes: (xs: $font-size-base * 0.75, sm: $font-size-base * 0.875, md: $font-size-base, lg: $font-size-base * 1.125, xl: $font-size-base * 1.25, 2xl: $font-size-base * 1.5, 3xl: $font-size-base * 1.875, 4xl: $font-size-base * 2.25, 5xl: $font-size-base * 3)
+@each $name, $size in $font-sizes
+  .fs-#{$name}
+    font-size: $size
+// ボーダー関連
+.bd0
+  border: none
+.bd
+  border: 1px solid
+$sides: (t: top, r: right, b: bottom, l: left)
+@each $suffix, $side in $sides
+  .bd-#{$suffix}
+    border-#{$side}: 1px solid
+// ボーダー半径も四則演算を利用
+@for $i from 0 through 4
+  $value: if($i == 0, 0, $base-unit * pow(2, $i - 1))
+  .br#{$i}
+    border-radius: $value
+.brf
+  border-radius: 9999px
+// 幅と高さ
+$sizes: (a: auto, 100: 100%, 75: 75%, 50: 50%, 25: 25%)
+@each $name, $size in $sizes
+  .w#{$name}
+    width: $size
+  .h#{$name}
+    height: $size
+// オーバーフロー
+$overflow-types: (h: hidden, s: scroll, a: auto, v: visible)
+@each $suffix, $value in $overflow-types
+  .of#{$suffix}
+    overflow: $value
+// カーソル
+$cursors: (p: pointer, d: default, na: not-allowed)
+@each $suffix, $value in $cursors
+  .c#{$suffix}
+    cursor: $value
+// 垂直アライン
+$vertical-aligns: (m: middle, t: top, b: bottom)
+@each $suffix, $value in $vertical-aligns
+  .va-#{$suffix}
+    vertical-align: $value
+// ホワイトスペース
+$whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
+@each $suffix, $value in $whitespaces
+  .ws-#{$suffix}
+    white-space: $value
+// z-index（指数関数的なスケール）
+@for $i from 0 through 4
+  $value: if($i == 0, 0, pow(10, $i))
+  .z#{$value}
+    z-index: $value
+// レスポンシブメディアクエリミキシン
+@mixin respond-to($breakpoint)
+  @if $breakpoint == "xs"
+    @media (max-width: map-get($breakpoints, xs))
+      @content
+  @else
+    @media (min-width: map-get($breakpoints, $breakpoint))
+      @content
+// 表示・非表示のレスポンシブクラス
+$display-map: (none: dn, block: db, flex: fl)
+$device-sizes: (xs, sm, md, lg, xl, xxl)
+@each $size in $device-sizes
+  @include respond-to($size)
+    @each $value, $class in $display-map
+      .#{$class}-#{$size}
+        display: $value

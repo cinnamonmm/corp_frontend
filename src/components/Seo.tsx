@@ -39,7 +39,7 @@ const Seo = ({ seo, defaultSeo }: SeoProps) => {
     ...defaultSeo,
     ...seo,
   };
-  
+
   const fullSeo = {
     metaTitle: seoWithDefaults.metaTitle,
     metaDescription: seoWithDefaults.metaDescription,
@@ -57,7 +57,7 @@ const Seo = ({ seo, defaultSeo }: SeoProps) => {
       {fullSeo.metaDescription && (
         <meta name="description" content={fullSeo.metaDescription} />
       )}
-      
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
       <meta property="og:title" content={fullSeo.metaTitle} />
@@ -67,7 +67,7 @@ const Seo = ({ seo, defaultSeo }: SeoProps) => {
       {fullSeo.shareImage && (
         <meta property="og:image" content={fullSeo.shareImage} />
       )}
-      
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullSeo.metaTitle} />
@@ -77,7 +77,7 @@ const Seo = ({ seo, defaultSeo }: SeoProps) => {
       {fullSeo.shareImage && (
         <meta name="twitter:image" content={fullSeo.shareImage} />
       )}
-      
+
       {/* Additional SEO fields */}
       {fullSeo.keywords && (
         <meta name="keywords" content={fullSeo.keywords} />

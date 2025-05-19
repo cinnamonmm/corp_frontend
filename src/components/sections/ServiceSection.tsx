@@ -1,15 +1,15 @@
 import React from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { HomePage, Service } from '../../types/strapi';
-import { getStrapiImageUrl } from '../../utils/helpers';
+import * as motion from 'framer-motion/client';
+import { HomePage, Service } from '@/types/strapi';
+import { getStrapiImageUrl } from '@/utils/helpers';
 
-interface ServicesSectionProps {
+interface ServiceSectionProps {
   homeData: HomePage;
   services: Service[];
 }
 
-const ServicesSection: React.FC<ServicesSectionProps> = ({ homeData, services }) => {
+const ServiceSection: React.FC<ServiceSectionProps> = ({ homeData, services }) => {
   return (
     <section id="services" className="py-20">
       <div className="container mx-auto px-4">
@@ -17,11 +17,11 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ homeData, services })
           <h2 className="text-3xl font-bold text-gray-900">{homeData.servicesTitle}</h2>
           <div className="w-16 h-1 bg-primary-600 mx-auto mt-4"></div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => {
             const iconUrl = getStrapiImageUrl(service.icon);
-            
+
             return (
               <motion.div
                 key={index}
@@ -37,13 +37,13 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ homeData, services })
                     alt={service.title}
                     width={64}
                     height={64}
-                    objectFit="contain"
+                    style={{ objectFit: 'contain' }}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
                   {service.title}
                 </h3>
-                <div 
+                <div
                   className="text-gray-700 text-center"
                   dangerouslySetInnerHTML={{ __html: service.description }}
                 />
@@ -56,4 +56,4 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ homeData, services })
   );
 };
 
-export default ServicesSection;
+export default ServiceSection;

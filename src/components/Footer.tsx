@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { SiteConfig } from '../types/strapi';
+import { SiteConfigResponse } from '@/types/strapi';
 
 interface FooterProps {
-  siteConfig: SiteConfig;
+  siteConfig: SiteConfigResponse;
 }
 
 const Footer: React.FC<FooterProps> = ({ siteConfig }) => {
@@ -17,7 +17,7 @@ const Footer: React.FC<FooterProps> = ({ siteConfig }) => {
               高品質なサービスを提供し、お客様のビジネスの成長をサポートします。
             </p>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">リンク</h3>
             <ul className="space-y-2">
@@ -43,15 +43,15 @@ const Footer: React.FC<FooterProps> = ({ siteConfig }) => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">ソーシャルメディア</h3>
             <div className="flex space-x-4">
               {siteConfig.socialLinks.map((link, index) => (
-                <a 
-                  key={index} 
-                  href={link.url} 
-                  target="_blank" 
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white"
                 >
@@ -61,7 +61,7 @@ const Footer: React.FC<FooterProps> = ({ siteConfig }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>© {new Date().getFullYear()} {siteConfig.siteName}. All rights reserved.</p>
         </div>

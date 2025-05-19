@@ -1,6 +1,6 @@
 /* ベースとなるスタイル */
-@import 'variables';
-@import 'mixins';
+@use 'variables';
+@use 'mixins';
 
 @tailwind base;
 @tailwind components;

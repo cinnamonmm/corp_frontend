@@ -11,7 +11,7 @@
     margin-bottom: $spacing-8;
     text-align: center;
 
-    @include responsive(md) {
+    @include mq(md) {
       font-size: $font-4xl;
     }
   }
@@ -28,17 +28,17 @@
   }
 
   &__buttons {
-    @include flex(row, flex-start, center, wrap);
+    @include fl(row, flex-start, center, wrap);
     gap: $spacing-4;
     margin-top: $spacing-4;
   }
 
   // レスポンシブデザイン
-  @include responsive(sm) {
+  @include mq(sm) {
     padding: $spacing-6;
   }
 
-  @include responsive(lg) {
+  @include mq(lg) {
     padding: $spacing-12;
   }
 }
