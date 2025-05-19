@@ -2,6 +2,66 @@
 $base-unit: 0.25rem
 $spacer: $base-unit
 $breakpoints: (xs: 575.98px, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px)
+$colors: (
+  // 基本色
+  'default': #212529,
+  'muted': #6c757d,
+  'white': #ffffff,
+  'black': #000000,
+  // グレースケール
+  'gray1': #f8f9fa,
+  'gray2': #e9ecef,
+  'gray3': #dee2e6,
+  'gray4': #ced4da,
+  'gray5': #adb5bd,
+  'gray6': #6c757d,
+  'gray7': #495057,
+  'gray8': #343a40,
+  'gray9': #212529,
+  // 状態色
+  'success': #28a745,
+  'danger': #dc3545,
+  'warning': #ffc107,
+  'info': #17a2b8,
+  // アクセント色
+  'primary': #007bff,
+  'secondary': #6c757d,
+  'accent': #fd7e14,
+  'highlight': #9a6ee2,
+  // 特殊色
+  'subtle': rgba(0, 0, 0, 0.65),
+  'disabled': #aaaaaa,
+  'link': #0366d6,
+  'link-visited': #551a8b,
+  'transparent': transparent
+)
+// シャドウのマップ定義
+$shadows: (
+  'none': none,
+  'sm': 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075),
+  'default': 0 0.5rem 1rem rgba(0, 0, 0, 0.15),
+  'lg': 0 1rem 3rem rgba(0, 0, 0, 0.175)
+)
+
+// 背景色
+@each $name, $color in $colors
+  .bg-#{$name}
+    background-color: $color
+
+// テキスト色
+@each $name, $color in $colors
+  .#{$name}
+    color: $color
+
+// シャドウ - ループを使用
+@each $name, $value in $shadows
+  @if $name == 'default'
+    .shadow
+      box-shadow: $value
+  @else
+    .shadow-#{$name}
+      box-shadow: $value
+
 // フレックスボックス関連
 .fl
   display: flex
@@ -128,6 +188,19 @@ $directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -righ
 .mya
   margin-top: auto
   margin-bottom: auto
+
+$insets: (t: top, r: right, b: bottom, l: left)
+@each $prop, $abbr in $insets
+  @for $i from 0 through 9
+    $value: spacing($i)
+    .#{$abbr}#{$i}
+      #{$prop}: $value
+// 便利な位置指定クラス
+.inset-0
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
 // テキスト関連
 $text-aligns: (c: center, l: left, r: right, j: justify)
 @each $suffix, $value in $text-aligns
@@ -199,8 +272,10 @@ $whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
   $value: if($i == 0, 0, pow(10, $i))
   .z#{$value}
     z-index: $value
+.zn
+  z-index: -1
 // レスポンシブメディアクエリミキシン
-@mixin respond-to($breakpoint)
+@mixin mq($breakpoint)
   @if $breakpoint == "xs"
     @media (max-width: map-get($breakpoints, xs))
       @content
@@ -208,10 +283,83 @@ $whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
     @media (min-width: map-get($breakpoints, $breakpoint))
       @content
 // 表示・非表示のレスポンシブクラス
-$display-map: (none: dn, block: db, flex: fl)
+$display-values: (
+  dn: none,
+  db: block,
+  di: inline,
+  dib: inline-block,
+  fl: flex,
+  fli: inline-flex,
+  gr: grid,
+  gri: inline-grid
+)
 $device-sizes: (xs, sm, md, lg, xl, xxl)
+// ブレークポイント指定のレスポンシブクラス（.md:dn 形式）
 @each $size in $device-sizes
-  @include respond-to($size)
-    @each $value, $class in $display-map
-      .#{$class}-#{$size}
-        display: $value
+  @include mq($size)
+    @each $class, $value in $display-values
+      .#{$size}\:#{$class}
+          display: $value
+
+// アクションタイプ定義
+$actions: (
+  "hover": ":hover",
+  "focus": ":focus",
+  "active": ":active",
+  "visited": ":visited",
+  "disabled": ":disabled",
+  "focus-within": ":focus-within",
+  "focus-visible": ":focus-visible"
+)
+// 属性タイプ定義
+$properties: (
+  "": "color",
+  "bg": "background-color",
+  "bd": "border-color",
+  "oc": "outline-color"
+)
+// 汎用的なアクションミックスイン
+@mixin action-variant($action, $property-key, $property-value, $color-name, $color-value)
+  $action-pseudo: map-get($actions, $action)
+  $property: map-get($properties, $property-key)
+  $prefix: if($property-key != "", "#{$property-key}", "")
+
+  .#{$action}\:#{$prefix}#{$color-name}
+    &#{$action-pseudo}
+      #{$property}: $color-value !important
+
+// すべてのアクションに対するプロパティと色の組み合わせを生成
+@each $action, $action-pseudo in $actions
+  @each $property-key, $property-value in $properties
+    @each $color-name, $color-value in $colors
+      $prefix: if($property-key != "", "#{$property-key}", "")
+      @include action-variant($action, $property-key, $property-value, $color-name, $color-value)
+      // 透明度バリエーション
+      @if $color-value != transparent
+        // 75% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-75", rgba($color-value, 0.75))
+        // 50% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-50", rgba($color-value, 0.50))
+        // 25% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-25", rgba($color-value, 0.25))
+// トランジション効果
+.act-tr
+  transition: all 0.35s ease-in-out
+// 特殊アクション効果
+.hover\:grow
+  transition: transform 0.35s ease
+  &:hover
+    transform: scale(1.05)
+.hover\:shadow
+  transition: box-shadow 0.35s ease
+  &:hover
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15)
+.focus\:outline
+  transition: outline 0.2s ease
+  &:focus
+    outline: 2px solid currentColor
+    outline-offset: 2px
+.active\:shrink
+  transition: transform 0.1s ease
+  &:active
+    transform: scale(0.98)
