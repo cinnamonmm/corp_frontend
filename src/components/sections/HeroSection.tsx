@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { HomePage } from '@/types/strapi';
 import { getStrapiImageUrl } from '@/utils/helpers';
 import { SiteConfig } from '@/types/siteConfig';
@@ -12,6 +12,8 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
+  const { scrollY } = useScroll();
+  const logoY = useTransform(scrollY, [0, 1000], [0, 350]);
   const heroImageUrl = getStrapiImageUrl(homeData.heroImage);
   const logoUrl = getStrapiImageUrl(siteConfig.logo);
   console.log('homeData')
@@ -43,6 +45,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
         <div className='pof inset-0 bgblack65 zn100' />
         <motion.div
           className="poa inset-0 fl aic jcc"
+          style={{ y: logoY }}
         >
           <Image
             src={logoUrl}
