@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HomePage } from '@/types/strapi';
@@ -9,11 +9,28 @@ import { SiteConfig } from '@/types/siteConfig';
 interface HeroSectionProps {
   homeData: HomePage;
   siteConfig: SiteConfig;
+  onScrollProgress?: (progress: number) => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig, onScrollProgress }) => {
   const { scrollY } = useScroll();
-  const logoY = useTransform(scrollY, [0, 1000], [0, 350]);
+  const [sectionHeight, setSectionHeight] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // セクションの高さを取得
+  useEffect(() => {
+    const updateHeight = () => {
+      if (sectionRef.current) {
+        setSectionHeight(sectionRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
+  const logoY = useTransform(scrollY, [0, sectionHeight], [0, sectionHeight * 0.35]);
   const heroImageUrl = getStrapiImageUrl(homeData.heroImage);
   const logoUrl = getStrapiImageUrl(siteConfig.logo);
   console.log('homeData')
@@ -21,8 +38,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
   console.log('siteConfig')
   console.log(siteConfig)
 
+  // スクロール進捗を計算して親コンポーネントに通知
+  React.useEffect(() => {
+    const unsubscribe = scrollY.onChange((latest) => {
+      const progress = Math.min(latest / sectionHeight, 1);
+      onScrollProgress?.(progress);
+    });
+    return () => unsubscribe();
+  }, [scrollY, onScrollProgress, sectionHeight]);
+
   return (
-    <section className="relative hscr fl aic">
+    <section ref={sectionRef} className="relative hscr fl aic">
       <div className="poa inset-0">
         <div className="relative w100 h100 zn1000">
           <Image
@@ -52,27 +78,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
             alt={homeData.heroTitle}
             width={500}
             height={500}
-            style={{ objectFit: 'contain', width: '50%', height: 'auto' }}
+            style={{ objectFit: 'contain', width: '35%', height: 'auto' }}
             priority
           />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-2xl text-white"
-        >
-          <div className="text-lg mb-2 text-primary-300">{siteConfig.siteName}</div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            {homeData.heroTitle}
-          </h1>
-          <div
-            className="text-xl mb-8"
-            dangerouslySetInnerHTML={{ __html: homeData.heroDescription }}
-          />
-          <button className="bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-8 rounded-lg transition duration-300">
-            詳細を見る
-          </button>
         </motion.div>
       </div>
     </section>

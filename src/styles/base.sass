@@ -1,3 +1,12 @@
+// レスポンシブメディアクエリミキシン
+@mixin mq($breakpoint)
+  @if $breakpoint == "xs"
+    @media (max-width: map-get($breakpoints, xs))
+      @content
+  @else
+    @media (min-width: map-get($breakpoints, $breakpoint))
+      @content
+
 // 汎用的なSASSユーティリティクラス
 $base-unit: 0.25rem
 $spacer: $base-unit
@@ -145,18 +154,98 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
 .gri
   display: inline-grid
 
-// グリッドギャップ - 基本単位を使用
-@for $i from 0 through 5
-  $value: if($i == 0, 0, $spacer * pow(2, $i - 1))
-  .gg#{$i}
-    gap: $value
-
 // グリッド列・行
 @for $i from 1 through 5
   .gtc#{$i}
     grid-template-columns: repeat($i, 1fr)
   .gtr#{$i}
     grid-template-rows: repeat($i, 1fr)
+
+// ブレイクポイント変数
+$breakpoints: ("xs": 0, "sm": 576px, "md": 768px, "lg": 992px, "xl": 1200px, "xxl": 1400px) !default
+
+// グリッド設定
+$grid-columns: 12 !default
+$grid-gaps: ("xs": 0.5rem, "sm": 0.75rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem) !default
+
+// グリッドコンテナミックスイン
+@mixin grid-container($gap: map-get($grid-gaps, "md"))
+  display: grid
+  gap: $gap
+  width: 100%
+
+// レスポンシブグリッド列ミックスイン
+@mixin grid-cols($cols, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-template-columns: repeat($cols, minmax(0, 1fr))
+  @else
+    grid-template-columns: repeat($cols, minmax(0, 1fr))
+
+// レスポンシブグリッド行ミックスイン
+@mixin grid-rows($rows, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-template-rows: repeat($rows, minmax(0, auto))
+  @else
+    grid-template-rows: repeat($rows, minmax(0, auto))
+
+// グリッドアイテムのカラムスパンミックスイン
+@mixin col-span($span, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-column: span $span
+  @else
+    grid-column: span $span
+
+// グリッドアイテムの行スパンミックスイン
+@mixin row-span($span, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-row: span $span
+  @else
+    grid-row: span $span
+
+// グリッドアイテムの配置ミックスイン
+@mixin grid-item-position($col-start, $col-end, $row-start, $row-end, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-column-start: $col-start
+      grid-column-end: $col-end
+      grid-row-start: $row-start
+      grid-row-end: $row-end
+  @else
+    grid-column-start: $col-start
+    grid-column-end: $col-end
+    grid-row-start: $row-start
+    grid-row-end: $row-end
+
+// 自動配置グリッド（auto-fit/auto-fill）
+@mixin auto-grid($min-size, $gap: map-get($grid-gaps, "md"), $type: "fit", $breakpoint: null)
+  display: grid
+  gap: $gap
+
+  @if $type == "fit"
+    @if $breakpoint
+      @include mq($breakpoint)
+        grid-template-columns: repeat(auto-fit, minmax($min-size, 1fr))
+    @else
+      grid-template-columns: repeat(auto-fit, minmax($min-size, 1fr))
+  @else if $type == "fill"
+    @if $breakpoint
+      @include mq($breakpoint)
+        grid-template-columns: repeat(auto-fill, minmax($min-size, 1fr))
+    @else
+      grid-template-columns: repeat(auto-fill, minmax($min-size, 1fr))
+
+// 特定の列数のグリッドを各ブレイクポイントで生成するユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @for $i from 1 through $grid-columns
+    .gc#{$i}\@#{$breakpoint}
+      @include grid-cols($i, $breakpoint)
+
+    .cs#{$i}\@#{$breakpoint}
+      @include col-span($i, $breakpoint)
 
 // 自動フロー
 .gaf
@@ -260,12 +349,32 @@ $text-transforms: (u: uppercase, l: lowercase, c: capitalize)
 @for $i from 1 through 9
   .fw#{$i}
     font-weight: $i * 100
+// 文字間隔
+@for $i from 0 through 9
+  .ls0#{$i}
+    letter-spacing: $i * 0.01em
+  .ls#{$i}
+    letter-spacing: $i * 0.1em
 
 // フォントサイズ - 比率を使用
 $font-size-base: 1rem
-$font-sizes: (xs: $font-size-base * 0.75, sm: $font-size-base * 0.875, md: $font-size-base, lg: $font-size-base * 1.125, xl: $font-size-base * 1.25, 2xl: $font-size-base * 1.5, 3xl: $font-size-base * 1.875, 4xl: $font-size-base * 2.25, 5xl: $font-size-base * 3)
+$font-sizes: (
+  xs: $font-size-base * 0.75,
+  sm: $font-size-base * 0.875,
+  md: $font-size-base,
+  lg: $font-size-base * 1.125,
+  xl: $font-size-base * 1.25,
+  2xl: $font-size-base * 1.5,
+  3xl: $font-size-base * 1.875,
+  4xl: $font-size-base * 2.25,
+  5xl: $font-size-base * 3,
+  6xl: $font-size-base * 3.5,
+  7xl: $font-size-base * 4,
+  8xl: $font-size-base * 4.5,
+  9xl: $font-size-base * 5
+  )
 @each $name, $size in $font-sizes
-  .fs-#{$name}
+  .fs#{$name}
     font-size: $size
 
 // ボーダー関連
@@ -329,15 +438,6 @@ $whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
     z-index: $value
   .zn#{$value}
     z-index: -$value
-
-// レスポンシブメディアクエリミキシン
-@mixin mq($breakpoint)
-  @if $breakpoint == "xs"
-    @media (max-width: map-get($breakpoints, xs))
-      @content
-  @else
-    @media (min-width: map-get($breakpoints, $breakpoint))
-      @content
 
 // 表示・非表示のレスポンシブクラス
 $display-values: (

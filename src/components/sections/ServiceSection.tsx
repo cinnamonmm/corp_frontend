@@ -12,13 +12,13 @@ interface ServiceSectionProps {
 const ServiceSection: React.FC<ServiceSectionProps> = ({ homeData, services }) => {
   return (
     <section id="services" className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900">{homeData.servicesTitle}</h2>
+      <div className="container mxa px4">
+        <div className="tac mb-16">
+          <h2 className="fs3xl fw9">{homeData.servicesTitle}</h2>
           <div className="w-16 h-1 bg-primary-600 mx-auto mt-4"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="gr gc1 md:gc2 lg:gc3 gg8">
           {services.map((service, index) => {
             const iconUrl = getStrapiImageUrl(service.icon);
 
