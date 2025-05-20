@@ -19,7 +19,7 @@ export default async function Home() {
       <Header siteConfig={siteConfig} />
 
       {/* TOP画像セクション */}
-      <HeroSection homeData={homeData} />
+      <HeroSection homeData={homeData} siteConfig={siteConfig} />
 
       {/* About セクション */}
       <AboutSection homeData={homeData} />

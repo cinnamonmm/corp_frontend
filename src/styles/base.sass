@@ -43,15 +43,39 @@ $shadows: (
   'lg': 0 1rem 3rem rgba(0, 0, 0, 0.175)
 )
 
+$transparencies: (
+  '90': 0.9,
+  '80': 0.8,
+  '75': 0.75,
+  '70': 0.7,
+  '65': 0.65,
+  '60': 0.6,
+  '50': 0.5,
+  '40': 0.4,
+  '35': 0.35,
+  '30': 0.3,
+  '25': 0.25,
+  '20': 0.2,
+  '10': 0.1,
+  '0': 0
+)
+
 // 背景色
 @each $name, $color in $colors
-  .bg-#{$name}
+  .bg#{$name}
     background-color: $color
+  @each $trkey, $transparency in $transparencies
+    .bg#{$name}#{$trkey}
+      background-color: rgba($color, $transparency)
+
 
 // テキスト色
 @each $name, $color in $colors
   .#{$name}
     color: $color
+  @each $trkey, $transparency in $transparencies
+    .#{$name}#{$trkey}
+      background-color: rgba($color, $transparency)
 
 // シャドウ - ループを使用
 @each $name, $value in $shadows
@@ -73,16 +97,19 @@ $shadows: (
   flex-wrap: nowrap
 .flwr
   flex-wrap: wrap-reverse
+
 // フレックス方向
 $directions: (r: row, c: column, rr: row-reverse, cr: column-reverse)
 @each $suffix, $value in $directions
   .fd#{$suffix}
     flex-direction: $value
+
 // 水平方向の配置（justify-content）
 $justify-contents: (s: flex-start, e: flex-end, c: center, b: space-between, a: space-around, v: space-evenly)
 @each $suffix, $value in $justify-contents
   .jc#{$suffix}
     justify-content: $value
+
 // 垂直方向の配置（align-items）
 $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
 @each $suffix, $value in $align-items
@@ -92,6 +119,7 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
     align-self: $value
   .ac#{$suffix}
     align-content: $value
+
 // フレックスアイテムの成長と収縮
 @for $i from 0 through 1
   .fg#{$i}
@@ -102,6 +130,7 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
   flex-basis: 0
 .fba
   flex-basis: auto
+
 // フレックスショートハンド
 .f1
   flex: 1
@@ -109,22 +138,26 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
   flex: 0
 .fa
   flex: auto
+
 // グリッド関連
 .gr
   display: grid
 .gri
   display: inline-grid
+
 // グリッドギャップ - 基本単位を使用
 @for $i from 0 through 5
   $value: if($i == 0, 0, $spacer * pow(2, $i - 1))
   .gg#{$i}
     gap: $value
+
 // グリッド列・行
 @for $i from 1 through 5
   .gtc#{$i}
     grid-template-columns: repeat($i, 1fr)
   .gtr#{$i}
     grid-template-rows: repeat($i, 1fr)
+
 // 自動フロー
 .gaf
   grid-auto-flow: row
@@ -132,11 +165,13 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
   grid-auto-flow: column
 .gafd
   grid-auto-flow: dense
+
 // 配置
 .gplcc
   place-content: center
 .gplic
   place-items: center
+
 // 表示関連
 .db
   display: block
@@ -146,6 +181,7 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
   display: inline-block
 .dn
   display: none
+
 // 位置関連
 $positions: (r: relative, a: absolute, f: fixed, s: sticky)
 @each $suffix, $value in $positions
@@ -156,6 +192,7 @@ $positions: (r: relative, a: absolute, f: fixed, s: sticky)
   top: 50%
   left: 50%
   transform: translate(-50%, -50%)
+
 // スペーシング関数 - 簡略化
 @function spacing($level)
   @if $level == 0
@@ -164,8 +201,10 @@ $positions: (r: relative, a: absolute, f: fixed, s: sticky)
     @return $spacer
   @else
     @return $spacer * (2 * ($level - 1))
+
 // 方向マップを定義
 $directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -right), y: (-top, -bottom))
+
 // マージンとパディングを生成
 @each $prop, $abbr in (margin: m, padding: p)
   @each $dir_key, $dir_val in $directions
@@ -179,6 +218,7 @@ $directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -righ
             #{$prop}#{$d}: $value
         @else
           #{$prop}#{$dir_val}: $value
+
 // 自動マージン
 .ma
   margin: auto
@@ -188,19 +228,20 @@ $directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -righ
 .mya
   margin-top: auto
   margin-bottom: auto
-
 $insets: (t: top, r: right, b: bottom, l: left)
 @each $prop, $abbr in $insets
   @for $i from 0 through 9
     $value: spacing($i)
     .#{$abbr}#{$i}
       #{$prop}: $value
+
 // 便利な位置指定クラス
 .inset-0
   top: 0
   right: 0
   bottom: 0
   left: 0
+
 // テキスト関連
 $text-aligns: (c: center, l: left, r: right, j: justify)
 @each $suffix, $value in $text-aligns
@@ -214,16 +255,19 @@ $text-transforms: (u: uppercase, l: lowercase, c: capitalize)
 @each $suffix, $value in $text-transforms
   .tt#{$suffix}
     text-transform: $value
+
 // フォントウェイト
 @for $i from 1 through 9
   .fw#{$i}
     font-weight: $i * 100
+
 // フォントサイズ - 比率を使用
 $font-size-base: 1rem
 $font-sizes: (xs: $font-size-base * 0.75, sm: $font-size-base * 0.875, md: $font-size-base, lg: $font-size-base * 1.125, xl: $font-size-base * 1.25, 2xl: $font-size-base * 1.5, 3xl: $font-size-base * 1.875, 4xl: $font-size-base * 2.25, 5xl: $font-size-base * 3)
 @each $name, $size in $font-sizes
   .fs-#{$name}
     font-size: $size
+
 // ボーダー関連
 .bd0
   border: none
@@ -234,12 +278,14 @@ $sides: (t: top, r: right, b: bottom, l: left)
   .bd-#{$suffix}
     border-#{$side}: 1px solid
 // ボーダー半径も四則演算を利用
+
 @for $i from 0 through 4
   $value: if($i == 0, 0, $base-unit * pow(2, $i - 1))
   .br#{$i}
     border-radius: $value
 .brf
   border-radius: 9999px
+
 // 幅と高さ
 $sizes: (a: auto, 100: 100%, 75: 75%, 50: 50%, 25: 25%)
 @each $name, $size in $sizes
@@ -247,33 +293,43 @@ $sizes: (a: auto, 100: 100%, 75: 75%, 50: 50%, 25: 25%)
     width: $size
   .h#{$name}
     height: $size
+.hscr
+  height: 100vh
+.wscr
+  width: 100vw
+
 // オーバーフロー
 $overflow-types: (h: hidden, s: scroll, a: auto, v: visible)
 @each $suffix, $value in $overflow-types
   .of#{$suffix}
     overflow: $value
+
 // カーソル
 $cursors: (p: pointer, d: default, na: not-allowed)
 @each $suffix, $value in $cursors
   .c#{$suffix}
     cursor: $value
+
 // 垂直アライン
 $vertical-aligns: (m: middle, t: top, b: bottom)
 @each $suffix, $value in $vertical-aligns
   .va-#{$suffix}
     vertical-align: $value
+
 // ホワイトスペース
 $whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
 @each $suffix, $value in $whitespaces
   .ws-#{$suffix}
     white-space: $value
+
 // z-index（指数関数的なスケール）
 @for $i from 0 through 4
   $value: if($i == 0, 0, pow(10, $i))
   .z#{$value}
     z-index: $value
-.zn
-  z-index: -1
+  .zn#{$value}
+    z-index: -$value
+
 // レスポンシブメディアクエリミキシン
 @mixin mq($breakpoint)
   @if $breakpoint == "xs"
@@ -282,6 +338,7 @@ $whitespaces: (nw: nowrap, p: pre, pw: pre-wrap)
   @else
     @media (min-width: map-get($breakpoints, $breakpoint))
       @content
+
 // 表示・非表示のレスポンシブクラス
 $display-values: (
   dn: none,
@@ -294,6 +351,7 @@ $display-values: (
   gri: inline-grid
 )
 $device-sizes: (xs, sm, md, lg, xl, xxl)
+
 // ブレークポイント指定のレスポンシブクラス（.md:dn 形式）
 @each $size in $device-sizes
   @include mq($size)
@@ -337,11 +395,15 @@ $properties: (
       // 透明度バリエーション
       @if $color-value != transparent
         // 75% 不透明度
-        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-75", rgba($color-value, 0.75))
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}75", rgba($color-value, 0.75))
+        // 65% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}65", rgba($color-value, 0.65))
         // 50% 不透明度
-        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-50", rgba($color-value, 0.50))
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}50", rgba($color-value, 0.50))
+        // 35% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}35", rgba($color-value, 0.35))
         // 25% 不透明度
-        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}-25", rgba($color-value, 0.25))
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}25", rgba($color-value, 0.25))
 // トランジション効果
 .act-tr
   transition: all 0.35s ease-in-out

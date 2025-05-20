@@ -14,20 +14,20 @@ const Header: React.FC<HeaderProps> = ({ siteConfig }) => {
   const logoUrl = getStrapiImageUrl(siteConfig.logo);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
+    <header className="pof t0 l0 r0 w100 z100 bdbrightness0">
+      <div className="container mxa px4 fl aic jcb">
+        <Link href="/" className="fl aic">
           <Image
             src={logoUrl}
             alt={siteConfig.siteName}
             width={150}
-            height={50}
+            height={60}
             style={{ objectFit: 'contain' }}
           />
         </Link>
 
         <nav className="hidden md:flex space-x-8">
-          <Link href="#about" className="font-medium text-gray-700 hover:text-primary-600">
+          <Link href="#about" className="font-medium gray7 hover:text-primary-600">
             会社概要
           </Link>
           <Link href="#services" className="font-medium text-gray-700 hover:text-primary-600">
@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ siteConfig }) => {
 
         {/* モバイルメニューボタン */}
         <button
-          className="block md:hidden"
+          className="block md:dn"
           aria-label="メニュー"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({ siteConfig }) => {
 
         {/* モバイルメニュー */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white shadow-md md:hidden">
+          <div className="poa top-full l0 r0 shadow md:dn">
             <div className="container mx-auto py-4 px-4 flex flex-col space-y-4">
               <Link href="#about" className="font-medium text-gray-700 hover:text-primary-600">
                 会社概要

@@ -1,38 +1,65 @@
+'use client'
 import React from 'react';
 import Image from 'next/image';
-import * as motion from 'framer-motion/client';
+import { motion } from 'framer-motion';
 import { HomePage } from '@/types/strapi';
 import { getStrapiImageUrl } from '@/utils/helpers';
+import { SiteConfig } from '@/types/siteConfig';
 
 interface HeroSectionProps {
   homeData: HomePage;
+  siteConfig: SiteConfig;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ homeData }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig }) => {
   const heroImageUrl = getStrapiImageUrl(homeData.heroImage);
-  console.log(heroImageUrl)
+  const logoUrl = getStrapiImageUrl(siteConfig.logo);
+  console.log('homeData')
   console.log(homeData)
+  console.log('siteConfig')
+  console.log(siteConfig)
 
   return (
-    <section className="relative h-screen flex items-center">
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={heroImageUrl}
-          alt={homeData.heroTitle}
-          fill
-          style={{ objectFit: 'cover' }}
-          priority
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-      </div>
-
-      <div className="container mx-auto px-4 z-10 relative">
+    <section className="relative hscr fl aic">
+      <div className="poa inset-0">
+        <div className="relative w100 h100 zn1000">
+          <Image
+            src={heroImageUrl}
+            alt={homeData.heroTitle}
+            width={1920}
+            height={1080}
+            style={{
+              objectFit: 'cover',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: -1
+            }}
+            priority
+          />
+        </div>
+        <div className='pof inset-0 bgblack65 zn100' />
+        <motion.div
+          className="poa inset-0 fl aic jcc"
+        >
+          <Image
+            src={logoUrl}
+            alt={homeData.heroTitle}
+            width={500}
+            height={500}
+            style={{ objectFit: 'contain', width: '50%', height: 'auto' }}
+            priority
+          />
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="max-w-2xl text-white"
         >
+          <div className="text-lg mb-2 text-primary-300">{siteConfig.siteName}</div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             {homeData.heroTitle}
           </h1>
