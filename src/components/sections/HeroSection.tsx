@@ -33,10 +33,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ homeData, siteConfig, onScrol
   const logoY = useTransform(scrollY, [0, sectionHeight], [0, sectionHeight * 0.35]);
   const heroImageUrl = getStrapiImageUrl(homeData.heroImage);
   const logoUrl = getStrapiImageUrl(siteConfig.logo);
-  console.log('homeData')
-  console.log(homeData)
-  console.log('siteConfig')
-  console.log(siteConfig)
 
   // スクロール進捗を計算して親コンポーネントに通知
   React.useEffect(() => {

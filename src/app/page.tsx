@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
-import { getHomePage, getServices, getSiteConfig } from "@/lib/api";
-import { HomePage, Service, SiteConfigResponse } from "@/types/strapi";
+import { getHomePage, getSiteConfig } from "@/lib/api";
+import { HomePage, SiteConfigResponse } from "@/types/strapi";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/sections/HeroSection";
@@ -10,73 +10,207 @@ import ServiceSection from "@/components/sections/ServiceSection";
 import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [heroHeight, setHeroHeight] = useState(0);
-  const heroRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [homeData, setHomeData] = useState<HomePage | null>(null);
-  const [services, setServices] = useState<Service[] | null>(null);
   const [siteConfig, setSiteConfig] = useState<SiteConfigResponse | null>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [inServiceSection, setInServiceSection] = useState(false);
 
-  // HeroSectionの高さを取得
+  // セクション参照を初期化
   useEffect(() => {
-    const updateHeroHeight = () => {
-      if (heroRef.current) {
-        setHeroHeight(heroRef.current.offsetHeight);
-      }
-    };
-
-    updateHeroHeight();
-    window.addEventListener('resize', updateHeroHeight);
-    return () => window.removeEventListener('resize', updateHeroHeight);
+    sectionRefs.current = Array(4).fill(null);
   }, []);
 
   // データのフェッチ
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
-      const [home, servicesData, config] = await Promise.all([
+      const [home, config] = await Promise.all([
         getHomePage(),
-        getServices(),
         getSiteConfig()
       ]);
       setHomeData(home);
-      setServices(servicesData);
       setSiteConfig(config);
     };
     fetchData();
   }, []);
 
-  if (!homeData || !services || !siteConfig) {
+  // サービスセクションから他のセクションへの移動処理
+  const handleServiceSectionScroll = (direction: 'up' | 'down') => {
+    if (isScrolling) return;
+
+    const targetSection = direction === 'up'
+      ? 1 // AboutSectionへ
+      : 3; // ContactSectionへ
+
+    navigateToSection(targetSection);
+  };
+
+  // 指定したセクションに移動する関数
+  const navigateToSection = (sectionIndex: number) => {
+    if (isScrolling || !sectionRefs.current[sectionIndex]) return;
+
+    setIsScrolling(true);
+    setActiveSection(sectionIndex);
+
+    sectionRefs.current[sectionIndex]?.scrollIntoView({
+      behavior: 'smooth'
+    });
+
+    setTimeout(() => {
+      setIsScrolling(false);
+      setInServiceSection(sectionIndex === 2); // ServiceSectionかどうかを設定
+    }, 1000);
+  };
+
+  // スクロールスナップのロジック
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // ServiceSectionの中にいる場合はServiceSection自身にスクロール処理を任せる
+      if (inServiceSection) return;
+
+      e.preventDefault();
+
+      if (isScrolling) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const nextSection = Math.min(Math.max(activeSection + direction, 0), sectionRefs.current.length - 1);
+
+      if (nextSection !== activeSection) {
+        navigateToSection(nextSection);
+      }
+    };
+
+    const container = containerRef.current;
+    container.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, [activeSection, isScrolling, inServiceSection]);
+
+  // スワイプ検出のロジック
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      // ServiceSectionの中にいる場合はServiceSection自身にスクロール処理を任せる
+      if (inServiceSection) return;
+
+      if (isScrolling) {
+        e.preventDefault();
+        return;
+      }
+
+      const touchEndY = e.touches[0].clientY;
+      const diff = touchStartY - touchEndY;
+
+      // 十分なスワイプ距離があるかを確認
+      if (Math.abs(diff) > 50) {
+        const direction = diff > 0 ? 1 : -1;
+        const nextSection = Math.min(Math.max(activeSection + direction, 0), sectionRefs.current.length - 1);
+
+        if (nextSection !== activeSection) {
+          e.preventDefault();
+          navigateToSection(nextSection);
+        }
+      }
+    };
+
+    const container = containerRef.current;
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [activeSection, isScrolling, inServiceSection]);
+
+  // サービスセクションに入ったことを検知
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const serviceEntry = entries[0];
+        setInServiceSection(serviceEntry.isIntersecting);
+      },
+      { threshold: 0.5 } // 50%以上表示されたらトリガー
+    );
+
+    const serviceSection = sectionRefs.current[2];
+    if (serviceSection) {
+      observer.observe(serviceSection);
+    }
+
+    return () => {
+      if (serviceSection) {
+        observer.unobserve(serviceSection);
+      }
+    };
+  }, []);
+
+  if (!homeData || !siteConfig) {
     return <div>Loading...</div>;
   }
 
+  // セクション参照のコールバック関数
+  const setSectionRef = (index: number) => (node: HTMLDivElement | null) => {
+    sectionRefs.current[index] = node;
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-hidden">
       {/* ヘッダー */}
       <Header siteConfig={siteConfig} />
 
-      <div ref={heroRef}>
-        <HeroSection
-          homeData={homeData}
-          siteConfig={siteConfig}
-          onScrollProgress={setScrollProgress}
-        />
-      </div>
-
       <div
-        className="transition-all duration-500 ease-out"
-        style={{
-          opacity: scrollProgress >= 1 ? 1 : 0,
-          visibility: scrollProgress >= 1 ? 'visible' : 'hidden',
-          transform: `translateY(${Math.max(0, (1 - scrollProgress) * heroHeight)}px)`,
-          position: 'relative',
-          zIndex: scrollProgress >= 1 ? 1 : -1,
-          marginTop: `-${heroHeight}px`,
-          paddingTop: '100vh'
-        }}
+        ref={containerRef}
+        className="h-screen snap-y snap-mandatory overflow-y-scroll"
       >
-        <AboutSection homeData={homeData} />
-        <ServiceSection homeData={homeData} services={services} />
-        <ContactSection homeData={homeData} />
+        <div
+          ref={setSectionRef(0)}
+          className="h-screen w-full snap-start"
+        >
+          <HeroSection
+            homeData={homeData}
+            siteConfig={siteConfig}
+            onScrollProgress={() => {}}
+          />
+        </div>
+
+        <div
+          ref={setSectionRef(1)}
+          className="h-screen w-full snap-start"
+        >
+          <AboutSection homeData={homeData} />
+        </div>
+
+        <div
+          ref={setSectionRef(2)}
+          className="h-screen w-full snap-start"
+          id="services"
+        >
+          <ServiceSection
+            homeData={homeData}
+            allowScroll={handleServiceSectionScroll}
+          />
+        </div>
+
+        <div
+          ref={setSectionRef(3)}
+          className="h-screen w-full snap-start"
+        >
+          <ContactSection homeData={homeData} />
+        </div>
       </div>
 
       {/* フッター */}

@@ -8,11 +8,11 @@ interface ContactSectionProps {
 
 const ContactSection: React.FC<ContactSectionProps> = ({ homeData }) => {
   return (
-    <section id="contact" className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900">{homeData.contactTitle}</h2>
-          <div className="w-16 h-1 bg-primary-600 mx-auto mt-4"></div>
+    <section id="contact" className="h100 fl fdc jcs pt-28">
+      <div className="container mxa px4 mt10">
+        <div className="tac mb10">
+          <h2 className="fs5xl fw9 mb4">{homeData.contactTitle}</h2>
+          <div className="w16 h1 bg-primary-600 mxa mt4"></div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

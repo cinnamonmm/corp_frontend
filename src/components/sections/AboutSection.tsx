@@ -7,25 +7,21 @@ interface AboutSectionProps {
 }
 
 const AboutSection: React.FC<AboutSectionProps> = ({ homeData }) => {
-
   return (
-    <section id="about" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <section id="about" className="h100 fl aic jcc bg-gray-50 pt-28">
+      <div className="container mxa px4 mt10">
+        <div className="tac mb10">
+          <h2 className="fs5xl fw9 mb4">{homeData.aboutTitle}</h2>
+          <div className="w16 h1 bg-primary-600 mxa"></div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="fs4xl mb7 tac ls1">
-              {homeData.aboutTitle}
-            </h2>
-            <div
-              className="leading-relaxed mx13 ls05"
-              // dangerouslySetInnerHTML={{ __html: homeData.aboutDescription }}
-            >
+            <div className="leading-relaxed mx13 ls05">
               <h3 className="fs3xl mb7">「未来」を共創する、ITと戦略のプロフェッショナル集団</h3>
               <p className="mb3 fsxl">
                 我々は単なるシステム開発会社ではありません。
