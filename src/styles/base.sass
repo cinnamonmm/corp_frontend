@@ -133,7 +133,7 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
 @for $i from 0 through 1
   .fg#{$i}
     flex-grow: $i
-  .fs#{$i}
+  .fsh#{$i}
     flex-shrink: $i
 .fb0
   flex-basis: 0
@@ -163,9 +163,12 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
 
 // グリッド設定
 $grid-columns: 12 !default
+$grid-rows: 12 !default
 $gap-values: (0: 0, 1: 0.25rem, 2: 0.5rem, 3: 0.75rem, 4: 1rem, 5: 1.25rem, 6: 1.5rem, 8: 2rem, 10: 2.5rem, 12: 3rem, 16: 4rem, 20: 5rem, 24: 6rem) !default
 $grid-gaps: ("xs": 0.5rem, "sm": 0.75rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem, "xxl": 3rem) !default
 $semantic-gaps: ("none": 0, "xs": 0.25rem, "sm": 0.5rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem, "xxl": 3rem) !default
+// 特別な値の定義
+$span-keywords: ("auto": auto, "full": -1) !default
 
 
 // グリッドコンテナミックスイン
@@ -190,21 +193,237 @@ $semantic-gaps: ("none": 0, "xs": 0.25rem, "sm": 0.5rem, "md": 1rem, "lg": 1.5re
   @else
     grid-template-rows: repeat($rows, minmax(0, auto))
 
-// グリッドアイテムのカラムスパンミックスイン
+// 列スパンミックスイン
 @mixin col-span($span, $breakpoint: null)
-  @if $breakpoint
-    @include mq($breakpoint)
-      grid-column: span $span
-  @else
-    grid-column: span $span
+  $span-value: null
 
-// グリッドアイテムの行スパンミックスイン
-@mixin row-span($span, $breakpoint: null)
+  @if $span == "full"
+    $span-value: 1 / -1
+  @else if $span == "auto"
+    $span-value: auto
+  @else if type-of($span) == number
+    $span-value: span $span
+  @else
+    @warn "無効なスパン値: #{$span}"
+    $span-value: span 1
+
   @if $breakpoint
     @include mq($breakpoint)
-      grid-row: span $span
+      grid-column: $span-value
   @else
-    grid-row: span $span
+    grid-column: $span-value
+
+// 行スパンミックスイン
+@mixin row-span($span, $breakpoint: null)
+  $span-value: null
+
+  @if $span == "full"
+    $span-value: 1 / -1
+  @else if $span == "auto"
+    $span-value: auto
+  @else if type-of($span) == number
+    $span-value: span $span
+  @else
+    @warn "無効なスパン値: #{$span}"
+    $span-value: span 1
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-row: $span-value
+  @else
+    grid-row: $span-value
+
+// 列開始位置ミックスイン
+@mixin col-start($position, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-column-start: $position
+  @else
+    grid-column-start: $position
+
+// 列終了位置ミックスイン
+@mixin col-end($position, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-column-end: $position
+  @else
+    grid-column-end: $position
+
+// 行開始位置ミックスイン
+@mixin row-start($position, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-row-start: $position
+  @else
+    grid-row-start: $position
+
+// 行終了位置ミックスイン
+@mixin row-end($position, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-row-end: $position
+  @else
+    grid-row-end: $position
+
+// 列位置範囲指定ミックスイン
+@mixin col-range($start, $end, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-column: $start / $end
+  @else
+    grid-column: $start / $end
+
+// 行位置範囲指定ミックスイン
+@mixin row-range($start, $end, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-row: $start / $end
+  @else
+    grid-row: $start / $end
+
+// 完全な位置指定ミックスイン
+@mixin grid-area($row-start, $col-start, $row-end, $col-end, $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      grid-area: $row-start / $col-start / $row-end / $col-end
+  @else
+    grid-area: $row-start / $col-start / $row-end / $col-end
+
+// 数値ベースの列スパンユーティリティクラス
+@for $i from 1 through $grid-columns
+  .cs#{$i}
+    grid-column: span $i
+
+// 数値ベースの行スパンユーティリティクラス
+@for $i from 1 through $grid-rows
+  .rs#{$i}
+    grid-row: span $i
+
+// 特別な値のユーティリティクラス
+.cs-auto
+  grid-column: auto
+
+.rs-auto
+  grid-row: auto
+
+.cs-full
+  grid-column: 1 / -1
+
+.rs-full
+  grid-row: 1 / -1
+
+// 列開始位置ユーティリティクラス
+@for $i from 1 through $grid-columns
+  .cst#{$i}
+    grid-column-start: $i
+
+// 列終了位置ユーティリティクラス
+@for $i from 1 through ($grid-columns + 1)
+  .ce#{$i}
+    grid-column-end: $i
+
+// 行開始位置ユーティリティクラス
+@for $i from 1 through $grid-rows
+  .rst#{$i}
+    grid-row-start: $i
+
+// 行終了位置ユーティリティクラス
+@for $i from 1 through ($grid-rows + 1)
+  .re#{$i}
+    grid-row-end: $i
+
+// 特別な開始/終了位置
+.cst-auto
+  grid-column-start: auto
+
+.ce-auto
+  grid-column-end: auto
+
+.rst-auto
+  grid-row-start: auto
+
+.re-auto
+  grid-row-end: auto
+
+// レスポンシブ列スパンユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through $grid-columns
+      .cs#{$i}\@#{$breakpoint}, #{$breakpoint}\:cs#{$i}
+        @include mq($breakpoint)
+          grid-column: span $i
+
+    .cs-auto\@#{$breakpoint}, #{$breakpoint}\:cs-auto
+      @include mq($breakpoint)
+        grid-column: auto
+
+    .cs-full\@#{$breakpoint}, #{$breakpoint}\:cs-full
+      @include mq($breakpoint)
+        grid-column: 1 / -1
+
+// レスポンシブ行スパンユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through $grid-rows
+      .rs#{$i}\@#{$breakpoint}, #{$breakpoint}\:rs#{$i}
+        @include mq($breakpoint)
+          grid-row: span $i
+
+    .rs-auto\@#{$breakpoint}, #{$breakpoint}\:rs-auto
+      @include mq($breakpoint)
+        grid-row: auto
+
+    .rs-full\@#{$breakpoint}, #{$breakpoint}\:rs-full
+      @include mq($breakpoint)
+        grid-row: 1 / -1
+
+// レスポンシブ列開始位置ユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through $grid-columns
+      .cst#{$i}\@#{$breakpoint}, #{$breakpoint}\:cst#{$i}
+        @include mq($breakpoint)
+          grid-column-start: $i
+
+    .cst-auto\@#{$breakpoint}, #{$breakpoint}\:cst-auto
+      @include mq($breakpoint)
+        grid-column-start: auto
+
+// レスポンシブ列終了位置ユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through ($grid-columns + 1)
+      .ce#{$i}\@#{$breakpoint}, #{$breakpoint}\:ce#{$i}
+        @include mq($breakpoint)
+          grid-column-end: $i
+
+    .ce-auto\@#{$breakpoint}, #{$breakpoint}\:ce-auto
+      @include mq($breakpoint)
+        grid-column-end: auto
+
+// レスポンシブ行開始位置ユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through $grid-rows
+      .rst#{$i}\@#{$breakpoint}, #{$breakpoint}\:rst#{$i}
+        @include mq($breakpoint)
+          grid-row-start: $i
+
+    .rst-auto\@#{$breakpoint}, #{$breakpoint}\:rst-auto
+      @include mq($breakpoint)
+        grid-row-start: auto
+
+// レスポンシブ行終了位置ユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through ($grid-rows + 1)
+      .re#{$i}\@#{$breakpoint}, #{$breakpoint}\:re#{$i}
+        @include mq($breakpoint)
+          grid-row-end: $i
+
+    .re-auto\@#{$breakpoint}, #{$breakpoint}\:re-auto
+      @include mq($breakpoint)
+        grid-row-end: auto
 
 // グリッドアイテムの配置ミックスイン
 @mixin grid-item-position($col-start, $col-end, $row-start, $row-end, $breakpoint: null)
@@ -241,7 +460,7 @@ $semantic-gaps: ("none": 0, "xs": 0.25rem, "sm": 0.5rem, "md": 1rem, "lg": 1.5re
 // 特定の列数のグリッドを各ブレイクポイントで生成するユーティリティクラス
 @each $breakpoint, $width in $breakpoints
   @for $i from 1 through $grid-columns
-    .gc#{$i}\@#{$breakpoint}, .#{$breakpoint}\:gc#{$i}
+    .gtc#{$i}\@#{$breakpoint}, .#{$breakpoint}\:gtc#{$i}
       @include grid-cols($i, $breakpoint)
 
     .cs#{$i}\@#{$breakpoint}, .#{$breakpoint}\:cs#{$i}
@@ -504,7 +723,158 @@ $font-sizes: (
 @each $name, $size in $font-sizes
   .fs#{$name}
     font-size: $size
+// 数値ベースのline-height値（unitless）
+$line-height-values: ("3": 0.75, "4": 1, "5": 1.25, "6": 1.5, "7": 1.75, "8": 2, "9": 2.25, "10": 2.5) !default
+// セマンティックなline-height値
+$semantic-line-heights: ("none": 1, "tight": 1.25, "snug": 1.375, "normal": 1.5, "relaxed": 1.625, "loose": 2) !default
+// 固定値のline-height（ピクセル単位）
+$fixed-line-heights: ("3": 0.75rem, "4": 1rem, "5": 1.25rem, "6": 1.5rem, "7": 1.75rem, "8": 2rem, "9": 2.25rem, "10": 2.5rem) !default
+// 基本line-heightミックスイン
+@mixin line-height($value, $breakpoint: null)
+  $lh-value: null
 
+  @if map-has-key($line-height-values, $value)
+    $lh-value: map-get($line-height-values, $value)
+  @else if map-has-key($semantic-line-heights, $value)
+    $lh-value: map-get($semantic-line-heights, $value)
+  @else if type-of($value) == number
+    $lh-value: $value
+  @else
+    @warn "指定されたline-height値 '#{$value}' は定義されていません。"
+    $lh-value: 1.5
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      line-height: $lh-value
+  @else
+    line-height: $lh-value
+
+// 固定値line-heightミックスイン
+@mixin line-height-fixed($value, $breakpoint: null)
+  $lh-value: null
+
+  @if map-has-key($fixed-line-heights, $value)
+    $lh-value: map-get($fixed-line-heights, $value)
+  @else if type-of($value) == number
+    $lh-value: $value
+  @else
+    @warn "指定された固定line-height値 '#{$value}' は定義されていません。"
+    $lh-value: 1.5rem
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      line-height: $lh-value
+  @else
+    line-height: $lh-value
+
+// テキストタイプ別のline-heightプリセット
+@mixin heading-line-height($level: 1, $breakpoint: null)
+  $heading-values: ("1": 1.2, "2": 1.25, "3": 1.3, "4": 1.35, "5": 1.4, "6": 1.45)
+
+  @if map-has-key($heading-values, "#{$level}")
+    @include line-height(map-get($heading-values, "#{$level}"), $breakpoint)
+  @else
+    @include line-height("tight", $breakpoint)
+
+@mixin body-line-height($variant: "normal", $breakpoint: null)
+  @if $variant == "compact"
+    @include line-height("snug", $breakpoint)
+  @else if $variant == "comfortable"
+    @include line-height("relaxed", $breakpoint)
+  @else
+    @include line-height("normal", $breakpoint)
+
+@mixin caption-line-height($breakpoint: null)
+  @include line-height("tight", $breakpoint)
+
+// 数値ベースのユーティリティクラス（unitless値）
+@each $key, $value in $line-height-values
+  .lh#{$key}
+    line-height: $value
+
+// セマンティック名のユーティリティクラス
+@each $key, $value in $semantic-line-heights
+  .lh-#{$key}
+    line-height: $value
+
+// 固定値のユーティリティクラス
+@each $key, $value in $fixed-line-heights
+  .lhf#{$key}
+    line-height: $value
+
+// 見出し用プリセットクラス
+@for $i from 1 through 6
+  .lh-h#{$i}
+    @include heading-line-height($i)
+
+// 本文用プリセットクラス
+.lh-body
+  @include body-line-height("normal")
+
+.lh-body-compact
+  @include body-line-height("compact")
+
+.lh-body-comfortable
+  @include body-line-height("comfortable")
+
+// キャプション用プリセットクラス
+.lh-caption
+  @include caption-line-height
+
+// レスポンシブ数値ベースユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @each $key, $value in $line-height-values
+      .lh#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          line-height: $value
+
+// レスポンシブセマンティックユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @each $key, $value in $semantic-line-heights
+      .lh-#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          line-height: $value
+
+// レスポンシブ固定値ユーティリティクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @each $key, $value in $fixed-line-heights
+      .lhf#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          line-height: $value
+
+// レスポンシブ見出しプリセットクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @for $i from 1 through 6
+      .lh-h#{$i}\@#{$breakpoint}
+        @include mq($breakpoint)
+          @include heading-line-height($i)
+
+// レスポンシブ本文プリセットクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    .lh-body\@#{$breakpoint}
+      @include mq($breakpoint)
+        @include body-line-height("normal")
+
+    .lh-body-compact\@#{$breakpoint}
+      @include mq($breakpoint)
+        @include body-line-height("compact")
+
+    .lh-body-comfortable\@#{$breakpoint}
+      @include mq($breakpoint)
+        @include body-line-height("comfortable")
+
+// レスポンシブキャプションプリセットクラス
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    .lh-caption\@#{$breakpoint}
+      @include mq($breakpoint)
+        @include caption-line-height
+        
 // ボーダー関連
 .bd0
   border: none

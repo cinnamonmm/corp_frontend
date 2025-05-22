@@ -27,7 +27,7 @@ const ServiceCategorySection: React.FC<{
           transition={{ duration: 0.5 }}
         >
           <div className="container mxa px4">
-            <div className="tac mb16">
+            <div className="tac">
               <h3 className="fs3xl fwb mb4">
                 {SERVICE_CATEGORIES[categoryKey].label}
               </h3>
