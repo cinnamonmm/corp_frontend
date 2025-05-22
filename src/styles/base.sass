@@ -161,12 +161,12 @@ $align-items: (s: flex-start, e: flex-end, c: center, b: baseline, str: stretch)
   .gtr#{$i}
     grid-template-rows: repeat($i, 1fr)
 
-// ブレイクポイント変数
-$breakpoints: ("xs": 0, "sm": 576px, "md": 768px, "lg": 992px, "xl": 1200px, "xxl": 1400px) !default
-
 // グリッド設定
 $grid-columns: 12 !default
-$grid-gaps: ("xs": 0.5rem, "sm": 0.75rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem) !default
+$gap-values: (0: 0, 1: 0.25rem, 2: 0.5rem, 3: 0.75rem, 4: 1rem, 5: 1.25rem, 6: 1.5rem, 8: 2rem, 10: 2.5rem, 12: 3rem, 16: 4rem, 20: 5rem, 24: 6rem) !default
+$grid-gaps: ("xs": 0.5rem, "sm": 0.75rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem, "xxl": 3rem) !default
+$semantic-gaps: ("none": 0, "xs": 0.25rem, "sm": 0.5rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem, "xxl": 3rem) !default
+
 
 // グリッドコンテナミックスイン
 @mixin grid-container($gap: map-get($grid-gaps, "md"))
@@ -241,11 +241,139 @@ $grid-gaps: ("xs": 0.5rem, "sm": 0.75rem, "md": 1rem, "lg": 1.5rem, "xl": 2rem) 
 // 特定の列数のグリッドを各ブレイクポイントで生成するユーティリティクラス
 @each $breakpoint, $width in $breakpoints
   @for $i from 1 through $grid-columns
-    .gc#{$i}\@#{$breakpoint}
+    .gc#{$i}\@#{$breakpoint}, .#{$breakpoint}\:gc#{$i}
       @include grid-cols($i, $breakpoint)
 
-    .cs#{$i}\@#{$breakpoint}
+    .cs#{$i}\@#{$breakpoint}, .#{$breakpoint}\:cs#{$i}
       @include col-span($i, $breakpoint)
+
+// 基本ギャップ設定ミックスイン
+@mixin gap($size, $breakpoint: null)
+  $gap-value: null
+
+  @if map-has-key($gap-values, $size)
+    $gap-value: map-get($gap-values, $size)
+  @else if map-has-key($semantic-gaps, $size)
+    $gap-value: map-get($semantic-gaps, $size)
+  @else if type-of($size) == number
+    $gap-value: $size
+  @else
+    @warn "指定されたギャップサイズ '#{$size}' は定義されていません。"
+    $gap-value: 1rem
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      gap: $gap-value
+  @else
+    gap: $gap-value
+
+// 行ギャップ専用ミックスイン
+@mixin row-gap($size, $breakpoint: null)
+  $gap-value: null
+
+  @if map-has-key($gap-values, $size)
+    $gap-value: map-get($gap-values, $size)
+  @else if map-has-key($semantic-gaps, $size)
+    $gap-value: map-get($semantic-gaps, $size)
+  @else if type-of($size) == number
+    $gap-value: $size
+  @else
+    @warn "指定されたギャップサイズ '#{$size}' は定義されていません。"
+    $gap-value: 1rem
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      row-gap: $gap-value
+  @else
+    row-gap: $gap-value
+
+// 列ギャップ専用ミックスイン
+@mixin col-gap($size, $breakpoint: null)
+  $gap-value: null
+
+  @if map-has-key($gap-values, $size)
+    $gap-value: map-get($gap-values, $size)
+  @else if map-has-key($semantic-gaps, $size)
+    $gap-value: map-get($semantic-gaps, $size)
+  @else if type-of($size) == number
+    $gap-value: $size
+  @else
+    @warn "指定されたギャップサイズ '#{$size}' は定義されていません。"
+    $gap-value: 1rem
+
+  @if $breakpoint
+    @include mq($breakpoint)
+      column-gap: $gap-value
+  @else
+    column-gap: $gap-value
+
+// 非対称ギャップ設定ミックスイン
+@mixin gap-asymmetric($row-size, $col-size, $breakpoint: null)
+  @include row-gap($row-size, $breakpoint)
+  @include col-gap($col-size, $breakpoint)
+
+// グリッドコンテナとギャップを同時設定
+@mixin grid-with-gap($cols: 1, $gap: "md", $breakpoint: null)
+  @if $breakpoint
+    @include mq($breakpoint)
+      display: grid
+      grid-template-columns: repeat($cols, minmax(0, 1fr))
+      @include gap($gap)
+  @else
+    display: grid
+    grid-template-columns: repeat($cols, minmax(0, 1fr))
+    @include gap($gap)
+
+// ユーティリティクラス生成（数値ベース）
+@each $key, $value in $gap-values
+  .g#{$key}
+    gap: $value
+
+  .rg#{$key}
+    row-gap: $value
+
+  .cg#{$key}
+    column-gap: $value
+
+// ユーティリティクラス生成（セマンティック名）
+@each $key, $value in $semantic-gaps
+  .g-#{$key}
+    gap: $value
+
+  .rg-#{$key}
+    row-gap: $value
+
+  .cg-#{$key}
+    column-gap: $value
+
+// レスポンシブユーティリティクラス生成
+@each $breakpoint, $width in $breakpoints
+  @if $breakpoint != "xs"
+    @each $key, $value in $gap-values
+      .g#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          gap: $value
+
+      .rg#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          row-gap: $value
+
+      .cg#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          column-gap: $value
+
+    @each $key, $value in $semantic-gaps
+      .g-#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          gap: $value
+
+      .rg-#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          row-gap: $value
+
+      .cg-#{$key}\@#{$breakpoint}
+        @include mq($breakpoint)
+          column-gap: $value
 
 // 自動フロー
 .gaf
@@ -297,7 +425,7 @@ $directions: ('': '', t: -top, b: -bottom, l: -left, r: -right, x: (-left, -righ
 // マージンとパディングを生成
 @each $prop, $abbr in (margin: m, padding: p)
   @each $dir_key, $dir_val in $directions
-    @for $i from 0 through 13
+    @for $i from 0 through 25
       $value: spacing($i)
       .#{$abbr}#{$dir_key}#{$i}
         @if $dir_val == ''
@@ -406,6 +534,12 @@ $sizes: (a: auto, 100: 100%, 75: 75%, 50: 50%, 25: 25%)
   height: 100vh
 .wscr
   width: 100vw
+@each $breakpoint, $size in $breakpoints
+  .mw#{$breakpoint}
+    max-width: $size
+  .mh#{$breakpoint}
+    max-height: $size
+
 
 // オーバーフロー
 $overflow-types: (h: hidden, s: scroll, a: auto, v: visible)

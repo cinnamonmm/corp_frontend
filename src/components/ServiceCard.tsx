@@ -1,8 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Service } from '@/types/strapi';
-import { getStrapiImageUrl } from '@/utils/helpers';
+// import { getStrapiImageUrl } from '@/utils/helpers';
 
 interface ServiceCardProps {
   service: Service;
@@ -10,7 +10,7 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
-  const iconUrl = getStrapiImageUrl(service.icon);
+  // const iconUrl = getStrapiImageUrl(service.icon);
 
   return (
     <motion.div
@@ -18,9 +18,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition duration-300"
+      className="bgwhite10 br1 shadow-lg p4 hover:shadow-xl transition duration-300"
     >
-      <div className="w-16 h-16 mxa mb6">
+      {/* <div className="w-16 h-16 mxa mb6">
         <Image
           src={iconUrl}
           alt={service.title}
@@ -28,7 +28,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
           height={64}
           style={{ objectFit: 'contain' }}
         />
-      </div>
+      </div> */}
       <h3 className="text-xl fwb mb4 text-center">
         {service.title}
       </h3>

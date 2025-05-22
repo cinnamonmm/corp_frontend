@@ -14,11 +14,13 @@ const ServiceCategorySection: React.FC<{
   services: typeof services;
   isVisible: boolean;
 }> = ({ categoryKey, services, isVisible }) => {
+  const isSystemDevelopment = categoryKey === 'system_development';
+
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="poa inset-0 fl aic jcc"
+          className="por fl aic jcc"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -32,7 +34,7 @@ const ServiceCategorySection: React.FC<{
               <div className="w16 h1 bg-primary-600 mxa"></div>
             </div>
 
-            <div className="gr gc1 md:gco2 lg:gco3 gap8">
+            <div className={`${isSystemDevelopment ? 'gr gc1 md:gc2 g4' : 'fl fdc g4'} mwxl mxa`}>
               {services.map((service, index) => (
                 <ServiceCard
                   key={`service-${service.order}`}
@@ -70,11 +72,7 @@ const ScrollIndicator: React.FC<{
 const ServiceSection: React.FC<ServiceSectionProps> = ({ allowScroll }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // スクロールイベントの管理用
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lockedRef = useRef(false);
 
   const servicesByCategory = useMemo(() => {
     const categories = Object.keys(SERVICE_CATEGORIES);
@@ -84,189 +82,176 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ allowScroll }) => {
     }));
   }, []);
 
-  // カテゴリを変更する関数
-  const changeCategory = (direction: number) => {
-    // スクロール処理中またはトランジション中は無視
-    if (isScrollingRef.current || isTransitioning) return;
+  // カスタムイベントを発火する関数
+  const triggerCategoryChange = (direction: 1 | -1) => {
+    // すでにロックされている場合は何もしない
+    if (lockedRef.current) return;
 
-    // スクロール処理中フラグを立てる
-    isScrollingRef.current = true;
+    // ロックをかける（即時に反映するためRef使用）
+    lockedRef.current = true;
 
-    const nextCategory = Math.min(
-      Math.max(activeCategory + direction, 0),
-      servicesByCategory.length - 1
-    );
+    // 次のカテゴリインデックスを計算
+    const nextCategory = activeCategory + direction;
 
-    // 境界条件: 最初または最後のカテゴリにいる場合
-    if (nextCategory === activeCategory) {
-      // 最初のカテゴリで上にスクロールした場合
-      if (direction < 0 && activeCategory === 0) {
-        allowScroll?.('up');
-        // スクロール処理中フラグを解除
-        isScrollingRef.current = false;
-        return;
-      }
-
-      // 最後のカテゴリで下にスクロールした場合
-      if (direction > 0 && activeCategory === servicesByCategory.length - 1) {
-        allowScroll?.('down');
-        // スクロール処理中フラグを解除
-        isScrollingRef.current = false;
-        return;
-      }
-
-      // その他の境界条件では何もしない
-      isScrollingRef.current = false;
+    // 境界チェック
+    if (nextCategory < 0) {
+      allowScroll?.('up');
+      lockedRef.current = false; // ロックを解除
       return;
     }
 
-    // トランジション開始
-    setIsTransitioning(true);
+    if (nextCategory >= servicesByCategory.length) {
+      allowScroll?.('down');
+      lockedRef.current = false; // ロックを解除
+      return;
+    }
+
+    // カテゴリを更新
     setActiveCategory(nextCategory);
 
-    // トランジション完了後にロックを解除
+    // トランジション時間後にロック解除
     setTimeout(() => {
-      setIsTransitioning(false);
-
-      // スクロール処理中フラグを解除するタイミングを遅らせる
-      // これにより、連続スクロールを確実に防止する
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 100);
+      lockedRef.current = false;
     }, 600);
   };
 
-  // スクロールイベントを処理
+  // スクロールイベント用の監視
   useEffect(() => {
-    if (!sectionRef.current) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    // スクロールデバウンスのタイムアウトをクリア
-    const clearScrollTimeout = () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-        scrollTimeoutRef.current = null;
-      }
-    };
+    // ホイールイベントハンドラ
+    let wheelTimeout: NodeJS.Timeout | null = null;
+    let lastWheelTime = 0;
 
     const handleWheel = (e: WheelEvent) => {
-      // すでにスクロール中なら無視
-      if (isScrollingRef.current || isTransitioning) {
+      // 現在ロック中なら全てのイベントをブロック
+      if (lockedRef.current) {
         e.preventDefault();
         return;
       }
 
+      const now = Date.now();
+
+      // 短時間に連続したホイールイベントを防ぐ（100ms以内）
+      if (now - lastWheelTime < 100) {
+        e.preventDefault();
+        return;
+      }
+
+      lastWheelTime = now;
+
+      // スクロール方向を判定
       const direction = e.deltaY > 0 ? 1 : -1;
 
-      // 最初/最後のカテゴリでの境界条件
+      // 境界チェック
+      if ((direction < 0 && activeCategory === 0) ||
+          (direction > 0 && activeCategory === servicesByCategory.length - 1)) {
+        // 境界では親コンポーネントにスクロールを委任
+        return;
+      }
+
+      // それ以外はスクロールイベントをキャンセル
+      e.preventDefault();
+
+      // 既存のタイムアウトをクリア
+      if (wheelTimeout) {
+        clearTimeout(wheelTimeout);
+      }
+
+      // スクロール終了を検出するためのタイムアウトを設定
+      wheelTimeout = setTimeout(() => {
+        triggerCategoryChange(direction as 1 | -1);
+      }, 5); // ごく短い遅延で実行
+    };
+
+    // イベントリスナーを追加
+    section.addEventListener('wheel', handleWheel, { passive: false });
+
+    // クリーンアップ
+    return () => {
+      section.removeEventListener('wheel', handleWheel);
+      if (wheelTimeout) {
+        clearTimeout(wheelTimeout);
+      }
+    };
+  }, [activeCategory, servicesByCategory.length, allowScroll]);
+
+  // タッチイベント用の監視
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    let touchStartY = 0;
+    let hasMoved = false;
+
+    // タッチ開始
+    const handleTouchStart = (e: TouchEvent) => {
+      if (lockedRef.current) return;
+
+      touchStartY = e.touches[0].clientY;
+      hasMoved = false;
+    };
+
+    // タッチ移動
+    const handleTouchMove = (e: TouchEvent) => {
+      // すでに移動済みまたはロック中なら処理しない
+      if (hasMoved || lockedRef.current) return;
+
+      const touchY = e.touches[0].clientY;
+      const diff = touchStartY - touchY;
+
+      // スワイプ距離が十分か確認（50px以上）
+      if (Math.abs(diff) < 50) return;
+
+      const direction = diff > 0 ? 1 : -1;
+
+      // 境界チェック
       if ((direction < 0 && activeCategory === 0) ||
           (direction > 0 && activeCategory === servicesByCategory.length - 1)) {
         return; // 親コンポーネントにスクロールを委任
       }
 
-      // それ以外はデフォルト動作を防止
+      // デフォルト動作をキャンセル
       e.preventDefault();
 
-      // 既存のタイムアウトをクリア
-      clearScrollTimeout();
+      // 移動済みフラグを立てる（2回目以降の処理を防止）
+      hasMoved = true;
 
-      // 新しいタイムアウトを設定（スクロール終了の検出）
-      scrollTimeoutRef.current = setTimeout(() => {
-        changeCategory(direction);
-      }, 10); // ほぼ即時実行するが、連続イベントをバッチ処理
+      // カテゴリ変更をトリガー
+      triggerCategoryChange(direction as 1 | -1);
     };
 
-    const section = sectionRef.current;
-    section.addEventListener('wheel', handleWheel, { passive: false });
-
-    return () => {
-      section.removeEventListener('wheel', handleWheel);
-      clearScrollTimeout();
-    };
-  }, [activeCategory, servicesByCategory.length, isTransitioning, allowScroll]);
-
-  // タッチイベントを処理
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    let touchStartY = 0;
-    let isTouchMoving = false;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      // スクロール中は新しいタッチ入力を無視
-      if (isScrollingRef.current || isTransitioning) return;
-
-      touchStartY = e.touches[0].clientY;
-      isTouchMoving = false;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      // すでにスクロール中なら無視
-      if (isScrollingRef.current || isTransitioning) {
-        e.preventDefault();
-        return;
-      }
-
-      // 最初のタッチ後の移動のみを処理
-      if (!isTouchMoving) {
-        const touchEndY = e.touches[0].clientY;
-        const diff = touchStartY - touchEndY;
-
-        // 小さな動きは無視
-        if (Math.abs(diff) < 20) return;
-
-        const direction = diff > 0 ? 1 : -1;
-
-        // 最初/最後のカテゴリでの境界チェック
-        if ((direction < 0 && activeCategory === 0) ||
-            (direction > 0 && activeCategory === servicesByCategory.length - 1)) {
-          return; // 親コンポーネントにスクロールを委任
-        }
-
-        e.preventDefault();
-        isTouchMoving = true; // これ以降のタッチムーブは無視
-
-        // カテゴリ変更を実行
-        changeCategory(direction);
-      }
-    };
-
-    // タッチ終了時のイベント
-    const handleTouchEnd = () => {
-      isTouchMoving = false;
-    };
-
-    const section = sectionRef.current;
+    // イベントリスナーを追加
     section.addEventListener('touchstart', handleTouchStart);
     section.addEventListener('touchmove', handleTouchMove, { passive: false });
-    section.addEventListener('touchend', handleTouchEnd);
 
+    // クリーンアップ
     return () => {
       section.removeEventListener('touchstart', handleTouchStart);
       section.removeEventListener('touchmove', handleTouchMove);
-      section.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [activeCategory, servicesByCategory.length, isTransitioning, allowScroll]);
+  }, [activeCategory, servicesByCategory.length, allowScroll]);
 
-  // キーボードイベントを処理
+  // キーボードイベント用の監視
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // スクロール中は新しいキー入力を無視
-      if (isScrollingRef.current || isTransitioning) return;
+      if (lockedRef.current) return;
 
-      let direction = 0;
+      let direction: 1 | -1 | null = null;
 
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         direction = 1;
       } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         direction = -1;
       } else {
-        return; // 関連するキーが押されていない
+        return; // 対象外のキー
       }
 
-      // 最初/最後のカテゴリでの境界チェック
-      if ((direction < 0 && activeCategory === 0) ||
-          (direction > 0 && activeCategory === servicesByCategory.length - 1)) {
-        if (direction < 0) {
+      // 境界チェック
+      if ((direction === -1 && activeCategory === 0) ||
+          (direction === 1 && activeCategory === servicesByCategory.length - 1)) {
+        if (direction === -1) {
           allowScroll?.('up');
         } else {
           allowScroll?.('down');
@@ -274,51 +259,48 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ allowScroll }) => {
         return;
       }
 
+      // デフォルト動作をキャンセル
       e.preventDefault();
-      changeCategory(direction);
+
+      // カテゴリ変更をトリガー
+      triggerCategoryChange(direction);
     };
 
+    // イベントリスナーを追加
     window.addEventListener('keydown', handleKeyDown);
 
+    // クリーンアップ
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [activeCategory, servicesByCategory.length, isTransitioning, allowScroll]);
+  }, [activeCategory, servicesByCategory.length, allowScroll]);
 
-  // カテゴリを直接選択
-  const handleCategorySelect = (index: number) => {
-    // スクロール中はクリックを無視
-    if (isScrollingRef.current || isTransitioning) return;
+  // ドットクリックハンドラ
+  const handleDotClick = (index: number) => {
+    if (lockedRef.current || index === activeCategory) return;
 
-    // 同じカテゴリを選択した場合は何もしない
-    if (index === activeCategory) return;
+    // ロックをかける
+    lockedRef.current = true;
 
-    // スクロール処理中フラグを立てる
-    isScrollingRef.current = true;
-
-    setIsTransitioning(true);
+    // カテゴリを更新
     setActiveCategory(index);
 
+    // トランジション時間後にロック解除
     setTimeout(() => {
-      setIsTransitioning(false);
-
-      // スクロール処理中フラグを解除するタイミングを遅らせる
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 100);
+      lockedRef.current = false;
     }, 600);
   };
 
   return (
-    <div ref={sectionRef} className="h100 por ovh">
-      <div className="container mxa px4 mt10">
-        <div className="tac mb10">
+    <section id="services" ref={sectionRef} className="h100 por ovh">
+      <div className="container mxa px4 pt11">
+        <div className="tac">
           <h2 className="fs5xl fw9 mb4">Services</h2>
           <div className="w16 h1 bg-primary-600 mxa"></div>
         </div>
       </div>
 
-      <div className="h100 poa inset-0 pt-28 mt10">
+      <div className="h100 por inset-0 pt-28">
         {servicesByCategory.map((category, index) => (
           <ServiceCategorySection
             key={category.key}
@@ -332,9 +314,9 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ allowScroll }) => {
       <ScrollIndicator
         count={servicesByCategory.length}
         activeIndex={activeCategory}
-        onClick={handleCategorySelect}
+        onClick={handleDotClick}
       />
-    </div>
+    </section>
   );
 };
 
