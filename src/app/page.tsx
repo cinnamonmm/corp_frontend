@@ -178,7 +178,7 @@ export default function Home() {
       >
         <div
           ref={setSectionRef(0)}
-          className="h-screen w-full snap-start"
+          className="ofs hscr w100 snap-start"
         >
           <HeroSection
             homeData={homeData}
@@ -197,7 +197,6 @@ export default function Home() {
         <div
           ref={setSectionRef(2)}
           className="h-screen w-full snap-start"
-          id="services"
         >
           <ServiceSection
             homeData={homeData}

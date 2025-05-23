@@ -20,7 +20,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
       viewport={{ once: true }}
       className="bgwhite10 br1 shadow-lg p2 hover:shadow-xl transition duration-300"
     >
-      <div className="gr gtc3 px2">
+      <div className="gr gtc3 px2 h100">
         {/* <div className="w-16 h-16 mxa mb6">
           <Image
             src={iconUrl}
@@ -34,7 +34,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
           {service.title}
         </h3>
         <div
-          className="lh6 cs2"
+          className="lh6 cs2 px4 fl aic"
           dangerouslySetInnerHTML={{ __html: service.description }}
         />
       </div>

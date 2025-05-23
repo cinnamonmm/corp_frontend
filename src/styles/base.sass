@@ -874,7 +874,7 @@ $fixed-line-heights: ("3": 0.75rem, "4": 1rem, "5": 1.25rem, "6": 1.5rem, "7": 1
     .lh-caption\@#{$breakpoint}
       @include mq($breakpoint)
         @include caption-line-height
-        
+
 // ボーダー関連
 .bd0
   border: none
@@ -916,6 +916,9 @@ $overflow-types: (h: hidden, s: scroll, a: auto, v: visible)
 @each $suffix, $value in $overflow-types
   .of#{$suffix}
     overflow: $value
+@each $suffix in (x, y)
+  .of#{$suffix}a
+    overflow-#{$suffix}: auto
 
 // カーソル
 $cursors: (p: pointer, d: default, na: not-allowed)
@@ -998,6 +1001,8 @@ $properties: (
       @include action-variant($action, $property-key, $property-value, $color-name, $color-value)
       // 透明度バリエーション
       @if $color-value != transparent
+        // 90% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}90", rgba($color-value, 0.90))
         // 75% 不透明度
         @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}75", rgba($color-value, 0.75))
         // 65% 不透明度
@@ -1008,6 +1013,8 @@ $properties: (
         @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}35", rgba($color-value, 0.35))
         // 25% 不透明度
         @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}25", rgba($color-value, 0.25))
+        // 10% 不透明度
+        @include action-variant($action, $property-key, $property-value, "#{$prefix}#{$color-name}10", rgba($color-value, 0.10))
 // トランジション効果
 .act-tr
   transition: all 0.35s ease-in-out

@@ -29,7 +29,7 @@ export const services: ServiceWithCategory[] = [
   // システム開発カテゴリー
   {
     title: 'Web アプリケーション開発',
-    description: 'ユーザー中心設計と最先端技術を駆使した、<br>堅牢かつ拡張性の高いアプリケーションを構築します',
+    description: 'ユーザー中心設計と最先端技術を駆使した、堅牢かつ拡張性の高いアプリケーションを構築します',
     icon: {
       data: {
         id: 1,
@@ -47,7 +47,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'モバイルアプリケーション開発',
-    description: 'iOS・Android両プラットフォームに対応した、<br>パフォーマンスとユーザビリティに優れたモバイルアプリケーションを提供します',
+    description: 'iOS・Android両プラットフォームに対応した、パフォーマンスとユーザビリティに優れたモバイルアプリケーションを提供します',
     icon: {
       data: {
         id: 2,
@@ -65,7 +65,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'AI / LLM システム開発',
-    description: '自然言語処理、機械学習、生成AIなどを活用し、<br>ニーズに合わせたAIソリューションを提供します',
+    description: '自然言語処理、機械学習、生成AIなどを活用し、ニーズに合わせたAIソリューションを提供します',
     icon: {
       data: {
         id: 3,
@@ -83,7 +83,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'エンタープライズシステム',
-    description: '基幹業務、ERP、CRM、SCM、BIなどのエンタープライズシステムの<br>設計・構築・導入を通じて業務効率化と生産性向上を支援します',
+    description: '基幹業務、ERP、CRM、SCM、BIなどのエンタープライズシステムの設計・構築・導入を通じて業務効率化と生産性向上を支援します',
     icon: {
       data: {
         id: 4,
@@ -101,7 +101,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: '業務システム',
-    description: '受発注、在庫、勤怠、経費精算など、<br>企業の個別ニーズに合わせた業務システムを開発し、効率化と情報共有を促進します',
+    description: '受発注、在庫、勤怠、経費精算など、企業の個別ニーズに合わせた業務システムを開発し、効率化と情報共有を促進します',
     icon: {
       data: {
         id: 5,
@@ -119,7 +119,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'プロトタイプ開発',
-    description: 'アイデアの早期具現化と検証のため、MVP開発やデザイン・機能・技術プロトタイピングを行い、<br>リスク軽減と意思決定を支援します',
+    description: 'アイデアの早期具現化と検証のため、MVP開発やデザイン・機能・技術プロトタイピングを行い、リスク軽減と意思決定を支援します',
     icon: {
       data: {
         id: 6,
@@ -137,7 +137,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'レガシーシステムリプレイス',
-    description: ' 現状分析に基づき最適な移行戦略を策定し、データ移行から新システム導入、クラウド化などを支援し、<br>運用コスト削減と保守性・セキュリティ強化を実現します',
+    description: ' 現状分析に基づき最適な移行戦略を策定し、データ移行から新システム導入、クラウド化などを支援し、運用コスト削減と保守性・セキュリティ強化を実現します',
     icon: {
       data: {
         id: 7,
@@ -157,7 +157,7 @@ export const services: ServiceWithCategory[] = [
   // DX事業カテゴリー
   {
     title: 'DX 戦略策定',
-    description: '現状分析と技術動向を踏まえ、ビジネス目標に沿ったDX戦略とロードマップを策定し、<br>変革推進を支援します',
+    description: '現状分析と技術動向を踏まえ、ビジネス目標に沿ったDX戦略とロードマップを策定し、変革推進を支援します',
     icon: {
       data: {
         id: 8,
@@ -175,7 +175,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'データ分析基盤構築・活用支援',
-    description: 'データ収集・統合基盤を構築し、BIツール導入やデータ分析、可視化を通じて、<br>データに基づいた意思決定とビジネス成長を支援します',
+    description: 'データ収集・統合基盤を構築し、BIツール導入やデータ分析、可視化を通じて、データに基づいた意思決定とビジネス成長を支援します',
     icon: {
       data: {
         id: 9,
@@ -193,7 +193,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'デジタルマーケティング活用支援',
-    description: 'Webサイト分析からSEO、広告運用、SNS、MA活用まで、<br>データに基づいたデジタルマーケティング戦略を実行し、効果最大化を支援します',
+    description: 'Webサイト分析からSEO、広告運用、SNS、MA活用まで、データに基づいたデジタルマーケティング戦略を実行し、効果最大化を支援します',
     icon: {
       data: {
         id: 10,
@@ -213,7 +213,7 @@ export const services: ServiceWithCategory[] = [
   // IT コンサル・戦略コンサルティングカテゴリー
   {
     title: 'IT 戦略コンサルティング',
-    description: '経営戦略と整合したIT戦略の策定、投資計画、組織最適化、<br>リスク管理、クラウド戦略などを支援し、企業のIT価値向上に貢献します',
+    description: '経営戦略と整合したIT戦略の策定、投資計画、組織最適化、リスク管理、クラウド戦略などを支援し、企業のIT価値向上に貢献します',
     icon: {
       data: {
         id: 11,
@@ -231,7 +231,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'IT デューデリジェンス業務',
-    description: 'IT資産、リスク、コストなどを評価し、<br>M&AにおけるIT統合・分離戦略策定や投資判断に必要な情報を提供します。',
+    description: 'IT資産、リスク、コストなどを評価し、M&AにおけるIT統合・分離戦略策定や投資判断に必要な情報を提供します。',
     icon: {
       data: {
         id: 12,
@@ -249,7 +249,7 @@ export const services: ServiceWithCategory[] = [
   },
   {
     title: 'ビジネスデューデリジェンス業務',
-    description: '市場、競合、事業戦略、財務、組織などを多角的に分析し、<br>投資判断やM&A戦略策定に必要な情報を提供します',
+    description: '市場、競合、事業戦略、財務、組織などを多角的に分析し、投資判断やM&A戦略策定に必要な情報を提供します',
     icon: {
       data: {
         id: 13,
