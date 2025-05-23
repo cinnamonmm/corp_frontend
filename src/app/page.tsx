@@ -213,7 +213,7 @@ export default function Home() {
       </div>
 
       {/* フッター */}
-      <Footer siteConfig={siteConfig} />
+      {/* <Footer siteConfig={siteConfig} /> */}
     </div>
   );
 }
