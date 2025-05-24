@@ -1,6 +1,7 @@
 import React from 'react';
 import * as motion from 'framer-motion/client';
 import { HomePage } from '@/types/strapi';
+import { FaLine } from 'react-icons/fa';
 
 interface ContactSectionProps {
   homeData: HomePage;
@@ -8,14 +9,15 @@ interface ContactSectionProps {
 
 const ContactSection: React.FC<ContactSectionProps> = ({ homeData }) => {
   return (
-    <section id="contact" className="h100 fl fdc jcs pt-28">
+    <section id="contact" className="h100 fl fdc jcs pt-28 por">
       <div className="container mxa px4 mt10">
         <div className="tac mb10">
           <h2 className="fs5xl fw9 mb4">{homeData.contactTitle}</h2>
           <div className="w16 h1 bg-primary-600 mxa mt4"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="fl fdc po-c">
+          <div className='fl jcc mb7'>以下のLINEからご相談内容をお送りください。</div>
           <motion.div
             className='w100 px4 mxa fl jcc'
             initial={{ opacity: 0, x: -30 }}
@@ -23,7 +25,15 @@ const ContactSection: React.FC<ContactSectionProps> = ({ homeData }) => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfxdZKQ13gvo_kdMq05hlF12_piPX-RK36-gBcDvExyEmFPZA/viewform?embedded=true" width="640" height="689" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>
+            <a
+              href="https://lin.ee/PpUlbVA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fl aic g2 text-[#00B900] hover:opacity-80 transition-opacity fs2xl"
+            >
+              <FaLine className="text-4xl" />
+              <span className="text-lg font-medium">LINE公式アカウントを追加</span>
+            </a>
           </motion.div>
         </div>
       </div>
