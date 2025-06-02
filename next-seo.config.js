@@ -1,11 +1,11 @@
 export default {
-    titleTemplate: '%s | サイト名',
-    defaultTitle: 'サイト名',
-    description: 'サイトのデフォルト説明文',
+    titleTemplate: '%s | Westerlund',
+    defaultTitle: 'Westerlund',
+    description: 'Westerlundは、ITと戦略のプロフェッショナル集団です。顧客の課題を解決し、ビジネスの成長を支援します。',
     openGraph: {
       type: 'website',
       locale: 'ja_JP',
-      site_name: 'サイト名',
+      site_name: 'Westerlund',
     },
     twitter: {
       handle: '@yourhandle',
