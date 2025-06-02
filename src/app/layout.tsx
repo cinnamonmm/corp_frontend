@@ -25,9 +25,16 @@ export const metadata: Metadata = {
   title: "Westerlund",
   description: "Westerlundは、ITと戦略のプロフェッショナル集団です。顧客の課題を解決し、ビジネスの成長を支援します。",
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+    apple: [
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.png'],
   },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
