@@ -1,9 +1,9 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { getHomePage, getSiteConfig } from "@/lib/api";
 import { HomePage, SiteConfigResponse } from "@/types/strapi";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+// import Footer from "@/components/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ServiceSection from "@/components/sections/ServiceSection";
@@ -48,7 +48,7 @@ export default function Home() {
   };
 
   // 指定したセクションに移動する関数
-  const navigateToSection = (sectionIndex: number) => {
+  const navigateToSection = useCallback((sectionIndex: number) => {
     if (isScrolling || !sectionRefs.current[sectionIndex]) return;
 
     setIsScrolling(true);
@@ -62,7 +62,7 @@ export default function Home() {
       setIsScrolling(false);
       setInServiceSection(sectionIndex === 2); // ServiceSectionかどうかを設定
     }, 1000);
-  };
+  }, [isScrolling]);
 
   // スクロールスナップのロジック
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function Home() {
     return () => {
       container.removeEventListener('wheel', handleWheel);
     };
-  }, [activeSection, isScrolling, inServiceSection]);
+  }, [activeSection, isScrolling, inServiceSection, navigateToSection]);
 
   // スワイプ検出のロジック
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function Home() {
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [activeSection, isScrolling, inServiceSection]);
+  }, [activeSection, isScrolling, inServiceSection, navigateToSection]);
 
   // サービスセクションに入ったことを検知
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function Home() {
         observer.unobserve(serviceSection);
       }
     };
-  }, []);
+  }, [ ]);
 
   if (!homeData || !siteConfig) {
     return <div>Loading...</div>;
@@ -200,7 +200,7 @@ export default function Home() {
         >
           <ServiceSection
             homeData={homeData}
-            allowScroll={handleServiceSectionScroll}
+            onScroll={handleServiceSectionScroll}
           />
         </div>
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HomePage } from '@/types/strapi';
 import ServiceCard from '@/components/ServiceCard';
@@ -6,6 +6,7 @@ import { services, SERVICE_CATEGORIES } from '@/data/services';
 
 interface ServiceSectionProps {
   homeData: HomePage;
+  onScroll: (direction: 'up' | 'down') => void;
 }
 
 const ServiceCategorySection: React.FC<{
@@ -50,9 +51,29 @@ const ServiceCategorySection: React.FC<{
   );
 };
 
-const ServiceSection: React.FC<ServiceSectionProps> = () => {
+const ServiceSection: React.FC<ServiceSectionProps> = ({ onScroll }) => {
   const [activeCategory, setActiveCategory] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // スクロール検出のロジック
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isTransitioning) return;
+
+      const direction = e.deltaY > 0 ? 'down' : 'up';
+      onScroll(direction);
+    };
+
+    const section = sectionRef.current;
+    section.addEventListener('wheel', handleWheel);
+
+    return () => {
+      section.removeEventListener('wheel', handleWheel);
+    };
+  }, [isTransitioning, onScroll]);
 
   const servicesByCategory = useMemo(() => {
     const categories = Object.keys(SERVICE_CATEGORIES);
@@ -75,7 +96,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = () => {
   };
 
   return (
-    <section id="services" className="h100 por ofh fl fdc">
+    <section ref={sectionRef} id="services" className="h100 por ofh fl fdc">
       <div className="container mxa px4 pt11">
         <div className="tac">
           <h2 className="fs5xl fw9 mb4">Services</h2>

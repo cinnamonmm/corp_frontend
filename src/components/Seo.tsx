@@ -2,6 +2,12 @@
 import Head from 'next/head';
 import { getStrapiMedia } from '@/lib/api';
 
+interface StructuredData {
+  '@context': string;
+  '@type': string;
+  [key: string]: unknown;
+}
+
 interface SeoProps {
   seo: {
     metaTitle: string;
@@ -19,7 +25,7 @@ interface SeoProps {
     canonicalURL?: string;
     keywords?: string;
     metaRobots?: string;
-    structuredData?: any;
+    structuredData?: StructuredData;
   };
   defaultSeo?: {
     metaTitle: string;

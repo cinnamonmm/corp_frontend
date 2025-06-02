@@ -23,9 +23,9 @@ const RenderLink = ({ link }: { link: LinkItem }) => {
   // 外部リンクと内部リンクの処理を分ける
   if (link.isExternal) {
     return (
-      <a 
-        href={link.url} 
-        target="_blank" 
+      <a
+        href={link.url}
+        target="_blank"
         rel="noopener noreferrer"
         className="nav-link"
       >
@@ -39,14 +39,14 @@ const RenderLink = ({ link }: { link: LinkItem }) => {
   if (hasChildren) {
     return (
       <div className="dropdown">
-        <button 
-          className="dropdown-toggle" 
+        <button
+          className="dropdown-toggle"
           onClick={() => setIsOpen(!isOpen)}
         >
           {link.icon && <span className="icon">{link.icon}</span>}
           {link.label}
         </button>
-        {isOpen && (
+        {isOpen && link.children && (
           <ul className="dropdown-menu">
             {link.children.map((childLink) => (
               <li key={childLink.id}>

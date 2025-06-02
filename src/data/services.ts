@@ -28,6 +28,7 @@ export interface ServiceWithCategory extends Service {
 export const services: ServiceWithCategory[] = [
   // システム開発カテゴリー
   {
+    id: 1,
     title: 'Web アプリケーション開発',
     description: 'ユーザー中心設計と最先端技術を駆使した、堅牢かつ拡張性の高いアプリケーションを構築します',
     icon: {
@@ -46,6 +47,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 2,
     title: 'モバイルアプリケーション開発',
     description: 'iOS・Android両プラットフォームに対応した、パフォーマンスとユーザビリティに優れたモバイルアプリケーションを提供します',
     icon: {
@@ -64,6 +66,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 3,
     title: 'AI / LLM システム開発',
     description: '自然言語処理、機械学習、生成AIなどを活用し、ニーズに合わせたAIソリューションを提供します',
     icon: {
@@ -82,6 +85,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 4,
     title: 'エンタープライズシステム',
     description: '基幹業務、ERP、CRM、SCM、BIなどのエンタープライズシステムの設計・構築・導入を通じて業務効率化と生産性向上を支援します',
     icon: {
@@ -100,6 +104,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 5,
     title: '業務システム',
     description: '受発注、在庫、勤怠、経費精算など、企業の個別ニーズに合わせた業務システムを開発し、効率化と情報共有を促進します',
     icon: {
@@ -118,6 +123,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 6,
     title: 'プロトタイプ開発',
     description: 'アイデアの早期具現化と検証のため、MVP開発やデザイン・機能・技術プロトタイピングを行い、リスク軽減と意思決定を支援します',
     icon: {
@@ -136,6 +142,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'system_development'
   },
   {
+    id: 7,
     title: 'レガシーシステムリプレイス',
     description: ' 現状分析に基づき最適な移行戦略を策定し、データ移行から新システム導入、クラウド化などを支援し、運用コスト削減と保守性・セキュリティ強化を実現します',
     icon: {
@@ -156,6 +163,7 @@ export const services: ServiceWithCategory[] = [
 
   // DX事業カテゴリー
   {
+    id: 8,
     title: 'DX 戦略策定',
     description: '現状分析と技術動向を踏まえ、ビジネス目標に沿ったDX戦略とロードマップを策定し、変革推進を支援します',
     icon: {
@@ -174,6 +182,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'dx_business'
   },
   {
+    id: 9,
     title: 'データ分析基盤構築・活用支援',
     description: 'データ収集・統合基盤を構築し、BIツール導入やデータ分析、可視化を通じて、データに基づいた意思決定とビジネス成長を支援します',
     icon: {
@@ -192,6 +201,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'dx_business'
   },
   {
+    id: 10,
     title: 'デジタルマーケティング活用支援',
     description: 'Webサイト分析からSEO、広告運用、SNS、MA活用まで、データに基づいたデジタルマーケティング戦略を実行し、効果最大化を支援します',
     icon: {
@@ -212,6 +222,7 @@ export const services: ServiceWithCategory[] = [
 
   // IT コンサル・戦略コンサルティングカテゴリー
   {
+    id: 11,
     title: 'IT 戦略コンサルティング',
     description: '経営戦略と整合したIT戦略の策定、投資計画、組織最適化、リスク管理、クラウド戦略などを支援し、企業のIT価値向上に貢献します',
     icon: {
@@ -230,6 +241,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'it_consulting'
   },
   {
+    id: 12,
     title: 'IT デューデリジェンス業務',
     description: 'IT資産、リスク、コストなどを評価し、M&AにおけるIT統合・分離戦略策定や投資判断に必要な情報を提供します。',
     icon: {
@@ -248,6 +260,7 @@ export const services: ServiceWithCategory[] = [
     category_key: 'it_consulting'
   },
   {
+    id: 13,
     title: 'ビジネスデューデリジェンス業務',
     description: '市場、競合、事業戦略、財務、組織などを多角的に分析し、投資判断やM&A戦略策定に必要な情報を提供します',
     icon: {

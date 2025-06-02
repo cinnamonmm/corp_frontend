@@ -5,6 +5,13 @@ const strapiAPI = axios.create({
   baseURL: process.env.NEXT_PUBLIC_STRAPI_API_URL + '/api',
 });
 
+// StrapiのメディアURLを取得する関数
+export const getStrapiMedia = (url: string | undefined | null): string => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${url}`;
+};
+
 export const getSiteConfig = async (): Promise<SiteConfigResponse> => {
   try {
     const response = await strapiAPI.get<{ data: SiteConfig[] }>('/globals', {
@@ -219,17 +226,21 @@ export const getServices = async (): Promise<Service[]> => {
       }
 
       // 型アサーションを使用して安全にプロパティにアクセス
-      const itemObj = item as { attributes?: {
-        title?: string;
-        description?: string;
-        order?: number;
-        icon?: {
-          data?: StrapiImageData
+      const itemObj = item as {
+        id: number;
+        attributes?: {
+          title?: string;
+          description?: string;
+          order?: number;
+          icon?: {
+            data?: StrapiImageData
+          }
         }
-      }};
+      };
 
       // APIレスポンスの構造に応じて適切にデータを抽出
       const service: Service = {
+        id: itemObj.id,
         title: itemObj.attributes?.title || '',
         description: itemObj.attributes?.description || '',
         icon: convertToStrapiImage(itemObj.attributes?.icon?.data ? itemObj.attributes.icon.data : undefined),
